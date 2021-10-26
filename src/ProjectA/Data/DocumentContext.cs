@@ -32,7 +32,7 @@ namespace ProjectA
                     a.OwnsOne(dv => dv.VersionNumber);
                     // a.HasKey("VersionId");
 
-                    a.Property<Guid>("Guid");
+                    a.Property<Guid>("Id");
                     a.HasKey("Id");
                 }).HasKey(p => p.EntityId);
         }
