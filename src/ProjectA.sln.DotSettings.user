@@ -1,0 +1,17 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CProjectA_005Clib_005CEDoc2_002EIAppService_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CProjectA_005Clib_005CEDoc2_002ESdk_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=E_003A_005CProjectA_005Clib_005CEDoc2_002EServiceProxy_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7cde36fd_002Df1de_002D4b9c_002D8c3d_002D059ad67b2ee3/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PersistDocument" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.EDocServiceTest.LoginTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.ModelTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.EDocServiceTest.RegisterTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.EDocServiceTest.IntegrationLoginTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b6a573cb_002D8e18_002D4a23_002Da8e6_002Ddf9ffcf0a935/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RegisterTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.EDocServiceTest&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

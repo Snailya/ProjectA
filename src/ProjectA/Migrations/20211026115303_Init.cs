@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProjectA.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +13,8 @@ namespace ProjectA.Migrations
                 {
                     EntityId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SnapshotEntityId = table.Column<int>(type: "INTEGER", nullable: true)
+                    SnapshotEntityId = table.Column<int>(type: "INTEGER", nullable: true),
+                    SnapshotFolderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,18 +31,19 @@ namespace ProjectA.Migrations
                 name: "DocVersion",
                 columns: table => new
                 {
-                    DocumentEntityId = table.Column<int>(type: "INTEGER", nullable: false),
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
                     VersionId = table.Column<int>(type: "INTEGER", nullable: false),
                     VersionNumber_Major = table.Column<int>(type: "INTEGER", nullable: true),
-                    VersionNumber_Minor = table.Column<int>(type: "INTEGER", nullable: true)
+                    VersionNumber_Minor = table.Column<int>(type: "INTEGER", nullable: true),
+                    EntityId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Guid = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DocVersion", x => new { x.DocumentEntityId, x.Id });
+                    table.PrimaryKey("PK_DocVersion", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DocVersion_Documents_DocumentEntityId",
-                        column: x => x.DocumentEntityId,
+                        name: "FK_DocVersion_Documents_EntityId",
+                        column: x => x.EntityId,
                         principalTable: "Documents",
                         principalColumn: "EntityId",
                         onDelete: ReferentialAction.Cascade);
@@ -50,6 +53,11 @@ namespace ProjectA.Migrations
                 name: "IX_Documents_SnapshotEntityId",
                 table: "Documents",
                 column: "SnapshotEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocVersion_EntityId",
+                table: "DocVersion",
+                column: "EntityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

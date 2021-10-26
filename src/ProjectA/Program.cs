@@ -35,28 +35,10 @@ namespace ProjectA
             // populate test data
             using var dbContext = new DocumentContext(
                 serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
-            if (!dbContext.Documents.Any()) SeedData.PopulateTestData(dbContext);
-            dbContext.Dispose();
-
-            // check eDoc Service
-            var orgAppService = serviceProvider.GetService<IOrgAppService>();
-            var token = GenerateToken(orgAppService);
-            if (!string.IsNullOrEmpty(token)) Console.WriteLine($"Get token successfully: {token}");
-
+            SeedData.PopulateTestData(dbContext);
+            
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
-        }
-
-        private static string GenerateToken(IOrgAppService orgAppService)
-        {
-            var userLoginDto = new UserLoginIntegrationByUserLoginNameDto
-            {
-                IntegrationKey = "46aa92ec-66af-4818-b7c1-8495a9bd7f17",
-                IPAddress = "192.222.222.100",
-                LoginName = "6470"
-            };
-            var loginResult = orgAppService.UserLoginIntegrationByUserLoginName(userLoginDto);
-            return loginResult.Data;
         }
     }
 }

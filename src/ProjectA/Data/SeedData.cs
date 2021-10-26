@@ -6,6 +6,9 @@ namespace ProjectA
     {
         public static void PopulateTestData(DocumentContext context)
         {
+            context.Database.EnsureCreated();
+            context.Database.EnsureCreated();
+            
             foreach (var item in context.Documents) context.Remove(item);
             context.SaveChanges();
 

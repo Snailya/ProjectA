@@ -4,7 +4,7 @@ namespace ProjectA.Models
 {
     public class EDocApiException : Exception
     {
-        public EDocApiException(object result)
+        public EDocApiException(string message) : base(message)
         {
         }
     }

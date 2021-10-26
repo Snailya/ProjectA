@@ -9,8 +9,8 @@ using ProjectA;
 namespace ProjectA.Migrations
 {
     [DbContext(typeof(DocumentContext))]
-    [Migration("20211026011141_FixSnapshotFolderIdNotSaved")]
-    partial class FixSnapshotFolderIdNotSaved
+    [Migration("20211026115303_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,25 +45,31 @@ namespace ProjectA.Migrations
 
                     b.OwnsMany("ProjectA.Models.DocVersion", "Versions", b1 =>
                         {
-                            b1.Property<int>("VersionId")
+                            b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("INTEGER");
 
-                            b1.Property<int>("DocumentEntityId")
+                            b1.Property<int>("EntityId")
                                 .HasColumnType("INTEGER");
 
-                            b1.HasKey("VersionId");
+                            b1.Property<Guid>("Guid")
+                                .HasColumnType("TEXT");
 
-                            b1.HasIndex("DocumentEntityId");
+                            b1.Property<int>("VersionId")
+                                .HasColumnType("INTEGER");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("EntityId");
 
                             b1.ToTable("DocVersion");
 
                             b1.WithOwner()
-                                .HasForeignKey("DocumentEntityId");
+                                .HasForeignKey("EntityId");
 
                             b1.OwnsOne("ProjectA.Models.VersionNumber", "VersionNumber", b2 =>
                                 {
-                                    b2.Property<int>("DocVersionVersionId")
+                                    b2.Property<int>("DocVersionId")
                                         .HasColumnType("INTEGER");
 
                                     b2.Property<int>("Major")
@@ -72,12 +78,12 @@ namespace ProjectA.Migrations
                                     b2.Property<int>("Minor")
                                         .HasColumnType("INTEGER");
 
-                                    b2.HasKey("DocVersionVersionId");
+                                    b2.HasKey("DocVersionId");
 
                                     b2.ToTable("DocVersion");
 
                                     b2.WithOwner()
-                                        .HasForeignKey("DocVersionVersionId");
+                                        .HasForeignKey("DocVersionId");
                                 });
 
                             b1.Navigation("VersionNumber");
