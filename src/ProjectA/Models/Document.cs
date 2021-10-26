@@ -24,7 +24,7 @@ namespace ProjectA.Models
 
         // navigation property
         public Document? Snapshot { get; private set; }
-        public int SnapshotFolderId { get; }
+        public int SnapshotFolderId { get; private set; }
 
         public bool HasSnapshot => SnapshotFolderId is not default(int);
 
