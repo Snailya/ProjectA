@@ -1,10 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
 
 namespace ProjectA.Models
 {
-    [Owned]
     public record VersionNumber(int Major, int Minor)
     {
         internal bool IsMajorVersion()

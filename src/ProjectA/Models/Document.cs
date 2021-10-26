@@ -1,7 +1,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ProjectA.Models
 {
@@ -20,7 +19,7 @@ namespace ProjectA.Models
             EntityId = entityId;
         }
 
-        [Key] public int EntityId { get; private set; }  // private set is used by efcore
+        public int EntityId { get; private set; } // private set is used by efcore
 
         // navigation property
         public Document? Snapshot { get; private set; }

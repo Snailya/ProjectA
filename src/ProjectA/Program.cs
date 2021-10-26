@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,10 +16,10 @@ namespace ProjectA
             // populate test data
             using var dbContext = new DocumentContext(
                 serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
-            if (!dbContext.Documents.Any()) SeedData.PopulateTestData(dbContext);
-            dbContext.Dispose();
-            
-            Console.WriteLine("Hello World!");
+            SeedData.PopulateTestData(dbContext);
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
     }
 }
