@@ -8,6 +8,7 @@ using EDoc2.ServiceProxy.Client;
 using EDoc2.ServiceProxy.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectA.Services;
 
 namespace ProjectA
 {
@@ -15,7 +16,7 @@ namespace ProjectA
     {
         private static void Main(string[] args)
         {
-            //setup our DI
+            // register database
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<DocumentContext>(options => options.UseSqlite("Data Source=document.db;"));
 
@@ -29,6 +30,9 @@ namespace ProjectA
                     return ProxyGenerator.CreateInterfaceProxyWithoutTarget(type, client);
                 });
 
+            // register shepherd service
+            serviceCollection.AddSingleton<ShepherdService>();
+            
             // build service provider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -36,6 +40,9 @@ namespace ProjectA
             using var dbContext = new DocumentContext(
                 serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
             SeedData.PopulateTestData(dbContext);
+            
+            // run listen service
+            serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer();
             
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
