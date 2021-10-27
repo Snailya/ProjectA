@@ -1,12 +1,56 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectA.Models
 {
     public class Document
     {
+        #region Private Properties
+
         private readonly List<DocVersion> _versions = new();
+
+        #endregion
+
+        public void SetSnapshotFolder(int snapshotFolderId)
+        {
+            if (Snapshot != null)
+                throw new InvalidOperationException(
+                    "Change snapshot folder is not allowed if the document already has a linked snapshot. " +
+                    "The snapshot folder id is only used the first time synchronizing the document from source folder to target folder. " +
+                    "After the snapshot has created, the tracking process is going with the snapshot's entity id.");
+
+            SnapshotFolderId = snapshotFolderId;
+        }
+
+        public void UpdateSnapshot(Document newSnapshot)
+        {
+            Snapshot = newSnapshot;
+        }
+
+        public void UpdateVersion(DocVersion newVersion)
+        {
+            if (_versions.Any(x=>x.VersionNumber == newVersion.VersionNumber))
+                throw new InvalidOperationException(
+                    "A document can't have two version with the same version number.");
+        
+            _versions.Add(newVersion);
+        }
+
+        #region Public Properties
+
+        public int EntityId { get; private set; } // XXX: private set is used by efcore
+
+        public Document? Snapshot { get; private set; }
+
+        public int SnapshotFolderId { get; private set; }
+
+        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly();
+
+        #endregion
+
+        #region Constructors
 
         public Document(int entityId, int snapshotFolderId)
         {
@@ -19,27 +63,6 @@ namespace ProjectA.Models
             EntityId = entityId;
         }
 
-        public int EntityId { get; private set; } // private set is used by efcore
-
-        // navigation property
-        public Document? Snapshot { get; private set; }
-        public int SnapshotFolderId { get; private set; }
-
-        public bool HasSnapshot => SnapshotFolderId is not default(int);
-
-        // owns
-        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly();
-
-        public void SetSnapshot(Document snapshot)
-        {
-            Snapshot ??= snapshot;
-
-            throw new Exception($"This document is already linked to a document with id {Snapshot.EntityId}");
-        }
-
-        public void UpdateVersion(DocVersion newVersion)
-        {
-            _versions.Add(newVersion);
-        }
+        #endregion
     }
 }

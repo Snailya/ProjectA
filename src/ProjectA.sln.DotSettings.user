@@ -10,6 +10,9 @@
     &lt;TestId&gt;NUnit3x::60CE0D3D-7918-4226-9D09-BB980DD607DE::net5.0::ProjectA.Test.EDocServiceTest.IntegrationLoginTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b6a573cb_002D8e18_002D4a23_002Da8e6_002Ddf9ffcf0a935/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RegisterTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b6a573cb_002D8e18_002D4a23_002Da8e6_002Ddf9ffcf0a935/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RegisterTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="E:\ProjectA\src\ProjectA.Test" Presentation="&amp;lt;ProjectA.Test&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bf23d353_002D5598_002D4b3d_002Db3ea_002D205b87e1a890/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SetSnapshotFolderId_ReturnsDocumentWithNewSnapshotFolderId" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="E:\ProjectA\src\ProjectA.Test" Presentation="&amp;lt;ProjectA.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

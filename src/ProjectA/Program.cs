@@ -30,6 +30,9 @@ namespace ProjectA
                     return ProxyGenerator.CreateInterfaceProxyWithoutTarget(type, client);
                 });
 
+            // register repository service
+            serviceCollection.AddSingleton<RepositoryService>();
+            
             // register shepherd service
             serviceCollection.AddSingleton<ShepherdService>();
             
