@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using EDoc2.IAppService;
-using EDoc2.IAppService.Model;
 using EDoc2.Sdk;
 using EDoc2.ServiceProxy;
 using EDoc2.ServiceProxy.Client;
 using EDoc2.ServiceProxy.DynamicProxy;
+using Hangfire;
+using Hangfire.Storage.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProjectA.Services;
@@ -32,10 +32,12 @@ namespace ProjectA
 
             // register repository service
             serviceCollection.AddSingleton<RepositoryService>();
-            
+
             // register shepherd service
             serviceCollection.AddSingleton<ShepherdService>();
-            
+
+            // register hangfire
+
             // build service provider
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
@@ -43,10 +45,13 @@ namespace ProjectA
             using var dbContext = new DocumentContext(
                 serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
             SeedData.PopulateTestData(dbContext);
-            
-            // run listen service
-            serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer();
-            
+
+            // run hangfire background server
+            GlobalConfiguration.Configuration.UseSQLiteStorage("Data Source=hangfire.db;");
+            using var server = new BackgroundJobServer();
+            RecurringJob.AddOrUpdate("shepherd-listen",
+                () => serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer(), Cron.Hourly);
+
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
