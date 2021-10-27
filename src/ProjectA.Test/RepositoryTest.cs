@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using ProjectA.Models;
 using ProjectA.Services;
+using ProjectA.Services.Exceptions;
 
 namespace ProjectA.Test
 {

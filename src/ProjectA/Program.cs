@@ -14,7 +14,30 @@ namespace ProjectA
 {
     internal class Program
     {
+        private static ServiceProvider _serviceProvider;
+
         private static void Main(string[] args)
+        {
+            // build service provider
+            _serviceProvider = ConfigureServices().BuildServiceProvider();
+
+            // populate test data
+            using var dbContext = new DocumentContext(
+                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+            SeedData.PopulateTestData(dbContext);
+
+            // run hangfire background server
+            GlobalConfiguration.Configuration.UseSQLiteStorage("Data Source=hangfire.db;");
+            using var server = new BackgroundJobServer();
+            RecurringJob.AddOrUpdate("shepherd-listen",
+                () => _serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer(), Cron.Hourly);
+
+            // run front end command handler
+            _serviceProvider.GetRequiredService<CommandService>().Run();
+        }
+
+
+        private static ServiceCollection ConfigureServices()
         {
             // register database
             var serviceCollection = new ServiceCollection();
@@ -30,30 +53,16 @@ namespace ProjectA
                     return ProxyGenerator.CreateInterfaceProxyWithoutTarget(type, client);
                 });
 
-            // register repository service
-            serviceCollection.AddSingleton<RepositoryService>();
-
             // register shepherd service
             serviceCollection.AddSingleton<ShepherdService>();
 
-            // register hangfire
+            // register repository service
+            serviceCollection.AddSingleton<RepositoryService>();
 
-            // build service provider
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            // register command service
+            serviceCollection.AddSingleton<CommandService>();
 
-            // populate test data
-            using var dbContext = new DocumentContext(
-                serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
-            SeedData.PopulateTestData(dbContext);
-
-            // run hangfire background server
-            GlobalConfiguration.Configuration.UseSQLiteStorage("Data Source=hangfire.db;");
-            using var server = new BackgroundJobServer();
-            RecurringJob.AddOrUpdate("shepherd-listen",
-                () => serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer(), Cron.Hourly);
-
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            return serviceCollection;
         }
     }
 }

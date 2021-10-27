@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ProjectA.Models;
+using ProjectA.Services.Exceptions;
 
 namespace ProjectA.Services
 {
@@ -17,6 +20,11 @@ namespace ProjectA.Services
         public IEnumerable<Document> List()
         {
             return _context.Documents.AsEnumerable();
+        }
+
+        public Task<IEnumerable<Document>> ListAsync(CancellationToken cancellationToken)
+        {
+            return Task.FromResult(_context.Documents.AsEnumerable());
         }
 
         public Document AddDocument(int entityId, int snapshotFolderId = default)
