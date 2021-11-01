@@ -6,33 +6,34 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ConsoleTables" Version="2.4.2" />
-        <PackageReference Include="hangfire" Version="1.7.25" />
-        <PackageReference Include="Hangfire.Storage.SQLite" Version="0.3.0" />
+        <PackageReference Include="ConsoleTables" Version="2.4.2"/>
+        <PackageReference Include="hangfire" Version="1.7.25"/>
+        <PackageReference Include="Hangfire.Storage.SQLite" Version="0.3.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.11">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.11" />
-        <PackageReference Include="NewtonSoft.Json" Version="13.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.11"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0"/>
+        <PackageReference Include="NewtonSoft.Json" Version="13.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="document.db">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Update="document.db">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="EDoc2.IAppService, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.IAppService.dll</HintPath>
-      </Reference>
-      <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
-      </Reference>
-      <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
-      </Reference>
+        <Reference Include="EDoc2.IAppService, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.IAppService.dll</HintPath>
+        </Reference>
+        <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
+        </Reference>
+        <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

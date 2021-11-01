@@ -8,6 +8,7 @@ using Hangfire;
 using Hangfire.Storage.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using ProjectA.Data;
 using ProjectA.Services;
 
 namespace ProjectA
@@ -46,7 +47,7 @@ namespace ProjectA
             // register eDoc service
             SdkBaseInfo.BaseUrl = "http://doc.scivic.com.cn:8889";
             foreach (var type in AppDomain.CurrentDomain.GetAllTypes().Where(type =>
-                type.IsInterface && typeof(IApplicationService).IsAssignableFrom(type)))
+                         type.IsInterface && typeof(IApplicationService).IsAssignableFrom(type)))
                 serviceCollection.AddSingleton(type, builder =>
                 {
                     var client = new HttpApiClient(SdkBaseInfo.BaseUrl);

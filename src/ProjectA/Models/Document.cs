@@ -31,22 +31,27 @@ namespace ProjectA.Models
 
         public void UpdateVersion(DocVersion newVersion)
         {
-            if (_versions.Any(x=>x.VersionNumber == newVersion.VersionNumber))
+            if (_versions.Any(x => x.VersionNumber == newVersion.VersionNumber))
                 throw new InvalidOperationException(
                     "A document can't have two version with the same version number.");
-        
+
             _versions.Add(newVersion);
         }
 
         #region Public Properties
 
+        #region Relationships
+
+        public Document? Snapshot { get; private set; } // one to zero one relationship
+        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly(); // one to zero many relationship
+
+        #endregion
+
+        public Guid Guid { get; private set; } // used by efcore to trace state
+
         public int EntityId { get; private set; } // XXX: private set is used by efcore
 
-        public Document? Snapshot { get; private set; }
-
         public int SnapshotFolderId { get; private set; }
-
-        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly();
 
         #endregion
 

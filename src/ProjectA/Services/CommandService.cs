@@ -72,7 +72,7 @@ namespace ProjectA.Services
                     {
                         Console.WriteLine($"Unknown command pattern: {commandException.Message}");
                     }
-                
+
                 DisplayInformation();
                 input = Console.ReadLine();
             }

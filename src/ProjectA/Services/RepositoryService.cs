@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ProjectA.Data;
 using ProjectA.Models;
 using ProjectA.Services.Exceptions;
 
@@ -30,7 +31,7 @@ namespace ProjectA.Services
         public Document AddDocument(int entityId, int snapshotFolderId = default)
         {
             // validate operation
-            if (_context.Documents.Find(entityId) is { })
+            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not null)
                 throw new RepositoryException($"The document: {entityId} has already been tracked.");
 
             // persist
@@ -47,17 +48,31 @@ namespace ProjectA.Services
         public void DeleteDocument(int entityId)
         {
             // check if not exist
-            if (_context.Documents.Find(entityId) is not { } document)
+            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
                 throw new RepositoryException($"The document: {entityId} not found.");
 
             _context.Documents.Remove(document);
             _context.SaveChanges();
         }
 
+        public Document UpdateSnapshot(int entityId, int snapshotId)
+        {
+            // check if not exist
+            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
+                throw new RepositoryException($"The document: {entityId} not found.");
+
+            if (_context.Documents.SingleOrDefault(x => x.EntityId == snapshotId) is not { } snapshot)
+                snapshot = new Document(snapshotId);
+            document.UpdateSnapshot(snapshot);
+            _context.SaveChanges();
+
+            return document;
+        }
+
         public void SetSnapshotFolder(int entityId, int snapshotFolderId)
         {
             // check if not exist
-            if (_context.Documents.Find(entityId) is not { } document)
+            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
                 throw new RepositoryException($"The document: {entityId} not found.");
 
             try

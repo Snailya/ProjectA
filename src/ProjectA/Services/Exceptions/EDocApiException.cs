@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectA.Models
+namespace ProjectA.Services.Exceptions
 {
     public class EDocApiException : Exception
     {
