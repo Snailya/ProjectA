@@ -13,20 +13,20 @@ namespace ProjectA.Test
         [OneTimeSetUp]
         public void Init()
         {
-            _serviceProvider = ConfigureServices().BuildServiceProvider();
-
-            PopulateTestData(new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>()));
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            
+            // build service provider
+            Build(services);
         }
 
-        private ServiceProvider _serviceProvider;
 
         [Test]
         public void SaveChangesSuccessfully_WhenAddDocument()
         {
             // arrange
             using var dbContext = new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
             var document = new Document(new Random().Next());
 
             // act
@@ -43,7 +43,7 @@ namespace ProjectA.Test
         {
             // arrange
             using var dbContext = new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
 
             var version = new DocVersion {VersionId = new Random().Next(), VersionNumber = new VersionNumber(1, 0)};
 
@@ -63,7 +63,7 @@ namespace ProjectA.Test
         {
             // arrange
             using var dbContext = new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
 
             var snapshot = new Document(new Random().Next());
 
@@ -81,7 +81,7 @@ namespace ProjectA.Test
         {
             // arrange
             using var dbContext = new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
             var expected = new Random().Next();
 
             // act

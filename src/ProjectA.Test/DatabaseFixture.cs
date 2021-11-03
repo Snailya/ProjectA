@@ -1,4 +1,3 @@
-using System;
 using System.Data.Common;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -12,22 +11,42 @@ namespace ProjectA.Test
     [TestFixture]
     public class DatabaseFixture
     {
-        protected IServiceCollection ConfigureServices()
+        public IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            return new ServiceCollection().AddDbContext<DocumentContext>(options =>
+            services.AddDbContext<DocumentContext>(options =>
                 options.UseSqlite(CreateInMemoryDatabase()));
+
+            return services;
         }
 
-        protected virtual void PopulateTestData(DocumentContext dbContext)
+        protected void Build(IServiceCollection services)
         {
+            ServiceProvider = services.BuildServiceProvider();
+            
+            using var dbContext = new DocumentContext(
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
             dbContext.Database.EnsureCreated();
             dbContext.Database.EnsureCreated();
+        }
 
-            var document = new Document(new Random().Next());
-            dbContext.Add(document);
+        protected ServiceProvider ServiceProvider;
+        
+        protected void AppendTestDataToDatabase(Document[] documents)
+        {
+            using var dbContext = new DocumentContext(
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+            dbContext.Documents.AddRange(documents);
             dbContext.SaveChanges();
         }
 
+        protected void ClearTestData()
+        {
+            using var dbContext = new DocumentContext(
+                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+            dbContext.Documents.RemoveRange(dbContext.Documents);
+            dbContext.SaveChanges();
+        }
+        
         private static DbConnection CreateInMemoryDatabase()
         {
             var connection = new SqliteConnection("Filename=:memory:");

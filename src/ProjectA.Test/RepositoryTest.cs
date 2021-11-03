@@ -1,9 +1,7 @@
 using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Data;
 using ProjectA.Models;
 using ProjectA.Services;
 using ProjectA.Services.Exceptions;
@@ -16,31 +14,33 @@ namespace ProjectA.Test
         [OneTimeSetUp]
         public void Init()
         {
-            var services = ConfigureServices();
-            services.AddSingleton<RepositoryService>();
-            _serviceProvider = services.BuildServiceProvider();
+            var services = new ServiceCollection();
+            ConfigureServices(services);
 
-            PopulateTestData(new DocumentContext(
-                _serviceProvider.GetRequiredService<DbContextOptions<DocumentContext>>()));
+            // register service
+            services.AddSingleton<RepositoryService>();
+
+            // build service provider
+            Build(services);
+            
+            PopulateTestData();
         }
 
-        private ServiceProvider _serviceProvider;
-
-        protected override void PopulateTestData(DocumentContext dbContext)
+        private void PopulateTestData()
         {
-            base.PopulateTestData(dbContext);
+            var snapshot = new Document(new Random().Next(), new Random().Next());
 
-            // append 
             var document = new Document(new Random().Next(), new Random().Next());
-            document.UpdateSnapshot(dbContext.Documents.First());
-            dbContext.SaveChanges();
+            document.UpdateSnapshot(snapshot);
+
+            AppendTestDataToDatabase(new[] {document, snapshot});
         }
 
         [Test]
         public void ListDocuments_ReturnsDocumentList()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
 
             // act
             var actual = repositoryService.List();
@@ -55,7 +55,7 @@ namespace ProjectA.Test
         public void AddDocument_ReturnsDocument(int snapshotFolderId = default)
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
             var entityId = new Random().Next();
 
             // act
@@ -70,7 +70,7 @@ namespace ProjectA.Test
         public void AddDocument_ThrowsRepositoryException_IfDocumentAlreadyExistInDatabase()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
 
             // act & assert
             Assert.Throws<RepositoryException>(() =>
@@ -83,7 +83,7 @@ namespace ProjectA.Test
         public void UpdateSnapshot_PersistANewSnapshotInDatabase_IfSnapshotNotExist()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
             var document = repositoryService.List().First();
             var snapshotId = new Random().Next();
 
@@ -98,7 +98,7 @@ namespace ProjectA.Test
         public void SetSnapshotFolderId_ReturnsDocumentWithNewSnapshotFolderId()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
             var document = repositoryService.AddDocument(new Random().Next());
             var snapshotFolderId = new Random().Next();
 
@@ -114,7 +114,7 @@ namespace ProjectA.Test
         public void SetSnapshotFolderId_ThrowsRepositoryException_IfSnapshotHasSet()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
             var document = repositoryService.AddDocument(new Random().Next());
             document = repositoryService.UpdateSnapshot(document.EntityId, new Random().Next());
 
@@ -127,7 +127,7 @@ namespace ProjectA.Test
         public void DeleteDocument_ReturnsNoContent_AfterDelete()
         {
             // arrange
-            var repositoryService = _serviceProvider.GetRequiredService<RepositoryService>();
+            var repositoryService = ServiceProvider.GetRequiredService<RepositoryService>();
             var entityId = repositoryService.List().First().EntityId;
 
             // act
