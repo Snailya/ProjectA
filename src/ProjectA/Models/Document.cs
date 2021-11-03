@@ -43,7 +43,7 @@ namespace ProjectA.Models
         #region Relationships
 
         public Document? Snapshot { get; private set; } // one to zero one relationship
-        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly(); // one to zero many relationship
+        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly().OrderBy(x=>x.VersionNumber); // one to zero many relationship
 
         #endregion
 
@@ -52,6 +52,8 @@ namespace ProjectA.Models
         public int EntityId { get; private set; } // XXX: private set is used by efcore
 
         public int SnapshotFolderId { get; private set; }
+
+        public DocVersion? CurVersion => Versions.LastOrDefault();
 
         #endregion
 

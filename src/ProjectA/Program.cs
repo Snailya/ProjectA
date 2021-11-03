@@ -31,7 +31,7 @@ namespace ProjectA
             GlobalConfiguration.Configuration.UseSQLiteStorage("Data Source=hangfire.db;");
             using var server = new BackgroundJobServer();
             RecurringJob.AddOrUpdate("shepherd-listen",
-                () => _serviceProvider.GetRequiredService<ShepherdService>().ListenEDocServer(), Cron.Hourly);
+                () => _serviceProvider.GetRequiredService<ShepherdService>().SyncDocVersionsFromEDoc(), Cron.Hourly);
 
             // run front end command handler
             _serviceProvider.GetRequiredService<CommandService>().Run();

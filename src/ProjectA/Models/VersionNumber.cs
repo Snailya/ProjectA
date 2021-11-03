@@ -3,8 +3,13 @@ using System.Text.RegularExpressions;
 
 namespace ProjectA.Models
 {
-    public record VersionNumber(int Major, int Minor)
+    public record VersionNumber(int Major, int Minor) : IComparable<VersionNumber>
     {
+        public int CompareTo(VersionNumber other)
+        {
+            return this < other ? -1 : this == other ? 0 : 1;
+        }
+
         internal bool IsMajorVersion()
         {
             return Minor == 0;

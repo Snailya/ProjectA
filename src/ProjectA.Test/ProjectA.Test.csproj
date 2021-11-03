@@ -7,28 +7,35 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
-        <PackageReference Include="NUnit" Version="3.13.1" />
-        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-        <PackageReference Include="coverlet.collector" Version="3.0.2" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4"/>
+        <PackageReference Include="NUnit" Version="3.13.1"/>
+        <PackageReference Include="NUnit3TestAdapter" Version="3.17.0"/>
+        <PackageReference Include="coverlet.collector" Version="3.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\ProjectA\ProjectA.csproj" />
+        <ProjectReference Include="..\ProjectA.Web\ProjectA.Web.csproj"/>
+        <ProjectReference Include="..\ProjectA\ProjectA.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="EDoc2.IAppService, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.IAppService.dll</HintPath>
-      </Reference>
-      <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
-      </Reference>
-      <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
-      </Reference>
+        <Reference Include="EDoc2.IAppService, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.IAppService.dll</HintPath>
+        </Reference>
+        <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
+        </Reference>
+        <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="TESTFILE">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>
