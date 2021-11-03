@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using EDoc2.IAppService;
 using EDoc2.IAppService.Model;
@@ -15,14 +16,14 @@ namespace ProjectA.Test
     {
         private ServiceProvider _serviceProvider;
 
-        [SetUp]
-        public void Setup()
+        [OneTimeSetUp]
+        public void Init()
         {
             var serviceCollection = new ServiceCollection();
 
             SdkBaseInfo.BaseUrl = "http://doc.scivic.com.cn:8889";
             foreach (var type in AppDomain.CurrentDomain.GetAllTypes().Where(type =>
-                type.IsInterface && typeof(IApplicationService).IsAssignableFrom(type)))
+                         type.IsInterface && typeof(IApplicationService).IsAssignableFrom(type)))
                 serviceCollection.AddSingleton(type, builder =>
                 {
                     var client = new HttpApiClient(SdkBaseInfo.BaseUrl);
@@ -35,24 +36,30 @@ namespace ProjectA.Test
         [Test]
         public void RegisterTest()
         {
+            // act
             var orgAppService = _serviceProvider.GetService<IOrgAppService>();
-            if (orgAppService != null) Assert.Pass();
-            Assert.Fail();
+
+            // assert
+            Assert.NotNull(orgAppService);
         }
 
         [Test]
         public void IntegrationLoginTest()
         {
+            // arrange
             var userLoginDto = new UserLoginIntegrationByUserLoginNameDto
             {
                 IntegrationKey = "46aa92ec-66af-4818-b7c1-8495a9bd7f17",
                 IPAddress = "192.222.222.100",
                 LoginName = "6470"
             };
+
+            // act
             var loginResult =
                 _serviceProvider.GetService<IOrgAppService>()!.UserLoginIntegrationByUserLoginName(userLoginDto);
-            if (loginResult.Result == 0) Assert.Pass();
-            Assert.Fail();
+
+            // assert
+            Assert.IsNotEmpty(loginResult.Data);
         }
     }
 }
