@@ -1,17 +1,20 @@
 using System;
 using System.Linq;
 using ConsoleTables;
-using ProjectA.Services.Exceptions;
+using ProjectA.Core.Services;
+using ProjectA.Core.Services.Exceptions;
 
 namespace ProjectA.Services
 {
     public class CommandService
     {
         private readonly RepositoryService _repositoryService;
+        private readonly ShepherdService _shepherdService;
 
-        public CommandService(RepositoryService repositoryService)
+        public CommandService(RepositoryService repositoryService, ShepherdService shepherdService)
         {
             _repositoryService = repositoryService;
+            _shepherdService = shepherdService;
         }
 
         private static void DisplayInformation()

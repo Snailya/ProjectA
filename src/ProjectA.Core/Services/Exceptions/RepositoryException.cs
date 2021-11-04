@@ -1,6 +1,6 @@
 using System;
 
-namespace ProjectA.Services.Exceptions
+namespace ProjectA.Core.Services.Exceptions
 {
     public class RepositoryException : Exception
     {

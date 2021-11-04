@@ -10,13 +10,14 @@ using EDoc2.Sdk;
 using EDoc2.Sdk.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using ProjectA.Data;
-using ProjectA.Models;
-using ProjectA.Services.Exceptions;
+using ProjectA.Core.Data;
+using ProjectA.Core.Interfaces;
+using ProjectA.Core.Models;
+using ProjectA.Core.Services.Exceptions;
 
-namespace ProjectA.Services
+namespace ProjectA.Core.Services
 {
-    public class ShepherdService
+    public class ShepherdService : IShepherdService
     {
         private readonly HttpClient _client;
         private readonly IDbContextFactory<DocumentContext> _contextFactory;
@@ -127,15 +128,16 @@ namespace ProjectA.Services
 
             var sources = context.Documents.Include(x => x.Snapshot)
                 .Where(x => x.SnapshotFolderId != default || x.Snapshot != null).ToList();
-            var validSources = sources.Where(x => x.Versions.Any() && x.CurVersion.VersionNumber >
-                (x.Snapshot == null ? new VersionNumber(0, 0) : x.Snapshot.CurVersion.VersionNumber)).ToList();
+            var validSources = sources.Where(x => x.Versions.Any() && x.CurVersion!.VersionNumber >
+                    (x.Snapshot?.CurVersion == null ? new VersionNumber(0, 0) : x.Snapshot.CurVersion.VersionNumber))
+                .ToList();
 
             foreach (var document in validSources)
             {
                 Debug.WriteLine($"SYNCHRONIZING FILE ID: {document.EntityId}");
 
                 var versionsNeedToUpdate = document.Versions.Where(x =>
-                    x.VersionNumber > (document.Snapshot == null
+                    x.VersionNumber > (document.Snapshot?.CurVersion == null
                         ? new VersionNumber(0, 0)
                         : document.Snapshot.CurVersion.VersionNumber)).ToList();
                 foreach (var version in versionsNeedToUpdate)

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectA.Models;
+using ProjectA.Core.Models;
 
-namespace ProjectA.Data
+namespace ProjectA.Core.Data
 {
     public class DocumentContext : DbContext
     {

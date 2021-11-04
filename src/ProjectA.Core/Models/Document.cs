@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ProjectA.Models
+namespace ProjectA.Core.Models
 {
     public class Document
     {
@@ -43,7 +43,9 @@ namespace ProjectA.Models
         #region Relationships
 
         public Document? Snapshot { get; private set; } // one to zero one relationship
-        public IEnumerable<DocVersion> Versions => _versions.AsReadOnly().OrderBy(x=>x.VersionNumber); // one to zero many relationship
+
+        public IEnumerable<DocVersion> Versions =>
+            _versions.AsReadOnly().OrderBy(x => x.VersionNumber); // one to zero many relationship
 
         #endregion
 

@@ -3,35 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ProjectA.Data;
-using ProjectA.Models;
-using ProjectA.Services.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using ProjectA.Core.Data;
+using ProjectA.Core.Models;
+using ProjectA.Core.Services.Exceptions;
 
-namespace ProjectA.Services
+namespace ProjectA.Core.Services
 {
     public class RepositoryService
     {
-        private readonly DocumentContext _context;
+        private readonly IDbContextFactory<DocumentContext> _dbContextFactory;
 
-        public RepositoryService(DocumentContext context)
+        public RepositoryService(IDbContextFactory<DocumentContext> dbContextFactory)
         {
-            _context = context;
+            _dbContextFactory = dbContextFactory;
         }
 
         public IEnumerable<Document> List()
         {
-            return _context.Documents.AsEnumerable();
+            using var context = _dbContextFactory.CreateDbContext();
+            return context.Documents.AsEnumerable();
         }
 
         public Task<IEnumerable<Document>> ListAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult(_context.Documents.AsEnumerable());
+            using var context = _dbContextFactory.CreateDbContext();
+            return Task.FromResult(context.Documents.AsEnumerable());
         }
 
         public Document AddDocument(int entityId, int snapshotFolderId = default)
         {
+            using var context = _dbContextFactory.CreateDbContext();
+
             // validate operation
-            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not null)
+            if (context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not null)
                 throw new RepositoryException($"The document: {entityId} has already been tracked.");
 
             // persist
@@ -39,40 +44,46 @@ namespace ProjectA.Services
                 ? new Document(entityId)
                 : new Document(entityId, snapshotFolderId);
 
-            _context.Documents.Add(document);
-            _context.SaveChanges();
+            context.Documents.Add(document);
+            context.SaveChanges();
 
             return document;
         }
 
         public void DeleteDocument(int entityId)
         {
+            using var context = _dbContextFactory.CreateDbContext();
+
             // check if not exist
-            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
+            if (context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
                 throw new RepositoryException($"The document: {entityId} not found.");
 
-            _context.Documents.Remove(document);
-            _context.SaveChanges();
+            context.Documents.Remove(document);
+            context.SaveChanges();
         }
 
         public Document UpdateSnapshot(int entityId, int snapshotId)
         {
+            using var context = _dbContextFactory.CreateDbContext();
+
             // check if not exist
-            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
+            if (context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
                 throw new RepositoryException($"The document: {entityId} not found.");
 
-            if (_context.Documents.SingleOrDefault(x => x.EntityId == snapshotId) is not { } snapshot)
+            if (context.Documents.SingleOrDefault(x => x.EntityId == snapshotId) is not { } snapshot)
                 snapshot = new Document(snapshotId);
             document.UpdateSnapshot(snapshot);
-            _context.SaveChanges();
+            context.SaveChanges();
 
             return document;
         }
 
         public void SetSnapshotFolder(int entityId, int snapshotFolderId)
         {
+            using var context = _dbContextFactory.CreateDbContext();
+
             // check if not exist
-            if (_context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
+            if (context.Documents.SingleOrDefault(x => x.EntityId == entityId) is not { } document)
                 throw new RepositoryException($"The document: {entityId} not found.");
 
             try
@@ -84,7 +95,7 @@ namespace ProjectA.Services
                 throw new RepositoryException(invalidOperationException.Message);
             }
 
-            _context.SaveChanges();
+            context.SaveChanges();
         }
     }
 }

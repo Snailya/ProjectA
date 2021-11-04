@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace ProjectA.Models
+namespace ProjectA.Core.Models
 {
     public record VersionNumber(int Major, int Minor) : IComparable<VersionNumber>
     {
