@@ -13,10 +13,11 @@ using EDoc2.ServiceProxy.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Data;
-using ProjectA.Models;
-using ProjectA.Services;
-using ProjectA.Services.Exceptions;
+using ProjectA.Core.Data;
+using ProjectA.Core.Interfaces;
+using ProjectA.Core.Models;
+using ProjectA.Core.Services;
+using ProjectA.Core.Services.Exceptions;
 
 namespace ProjectA.Test
 {
@@ -40,7 +41,7 @@ namespace ProjectA.Test
 
             // register other services
             services.AddScoped<HttpClient>();
-            services.AddSingleton<ShepherdService>();
+            services.AddSingleton<IShepherdService, ShepherdService>();
 
             // build service provider
             Build(services);
@@ -91,13 +92,13 @@ namespace ProjectA.Test
             }
 
             // act
-            var shepherdService = ServiceProvider.GetRequiredService<ShepherdService>();
-            var affected = shepherdService.SyncDocVersionsFromEDoc();
+            var shepherdService = ServiceProvider.GetRequiredService<IShepherdService>();
+            var affected = await shepherdService.SyncDocVersionsFromEDocAsync();
             int actual;
             await using (var dbContext = new DocumentContext(
                              ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>()))
             {
-                actual = dbContext.Documents.Single(x => x.EntityId == fileVersionInfoResult.FileId).CurVersion
+                actual = dbContext.Documents.Single(x => x.EntityId == fileVersionInfoResult.FileId)!.CurVersion!
                     .VersionId;
             }
 
@@ -127,9 +128,9 @@ namespace ProjectA.Test
             }
 
             // act & assert
-            var shepherdService = ServiceProvider.GetRequiredService<ShepherdService>();
+            var shepherdService = ServiceProvider.GetRequiredService<IShepherdService>();
             var affected = await shepherdService.UpdateSnapshotInTargetFolderAsync();
-            
+
             Assert.NotZero(affected);
 
             // act & assert
@@ -140,13 +141,13 @@ namespace ProjectA.Test
                 snapshot = dbContext.Documents.Include(x => x.Snapshot).Single(x => x.EntityId == document.EntityId)
                     .Snapshot;
             }
-            
+
             Assert.NotNull(snapshot);
 
             // act & assert
-            var snapshotFileInfo =GetFileVersionInfo(snapshot.EntityId);
-            
-            Assert.AreEqual(snapshotFileInfo.CurrentVersionId, snapshot.CurVersion.VersionId);
+            var snapshotFileInfo = GetFileVersionInfo(snapshot.EntityId);
+
+            Assert.AreEqual(snapshotFileInfo.CurrentVersionId, snapshot.CurVersion!.VersionId);
             Assert.AreEqual(snapshotFileInfo.FileCurVerNumStr, snapshot.CurVersion.VersionNumber.ToString());
         }
 
@@ -186,29 +187,31 @@ namespace ProjectA.Test
             }
 
             // act & assert
-            var shepherdService = ServiceProvider.GetRequiredService<ShepherdService>();
+            var shepherdService = ServiceProvider.GetRequiredService<IShepherdService>();
             var affected = await shepherdService.UpdateSnapshotInTargetFolderAsync();
-            
+
             Assert.NotZero(affected);
-            
+
             // act & assert
             VersionNumber documentVersionNumber;
             VersionNumber snapshotVersionNumber;
             await using (var dbContext = new DocumentContext(
                              ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>()))
             {
-                documentVersionNumber = dbContext.Documents.Include(x => x.Snapshot).Single(x => x.EntityId == document.EntityId)
-                    .CurVersion.VersionNumber;
-                snapshotVersionNumber = dbContext.Documents.Include(x => x.Snapshot).Single(x => x.EntityId == document.EntityId)
+                documentVersionNumber = dbContext.Documents.Include(x => x.Snapshot)
+                    .Single(x => x.EntityId == document.EntityId)
+                    .CurVersion!.VersionNumber;
+                snapshotVersionNumber = dbContext.Documents.Include(x => x.Snapshot)
+                    .Single(x => x.EntityId == document.EntityId)
                     .Snapshot!
-                    .CurVersion.VersionNumber;
+                    .CurVersion!.VersionNumber;
             }
 
             Assert.AreEqual(documentVersionNumber, snapshotVersionNumber);
-            
+
             // act & assert
             var snapshotFileInfo = GetFileVersionInfo(snapshot.EntityId);
-            
+
             Assert.AreEqual(snapshotFileInfo.FileCurVerNumStr, snapshotVersionNumber.ToString());
         }
 

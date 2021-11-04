@@ -3,8 +3,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Data;
-using ProjectA.Models;
+using ProjectA.Core.Data;
+using ProjectA.Core.Models;
 
 namespace ProjectA.Test
 {
@@ -13,7 +13,7 @@ namespace ProjectA.Test
     {
         public IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DocumentContext>(options =>
+            services.AddDbContextFactory<DocumentContext>(options =>
                 options.UseSqlite(CreateInMemoryDatabase()));
 
             return services;
@@ -22,31 +22,30 @@ namespace ProjectA.Test
         protected void Build(IServiceCollection services)
         {
             ServiceProvider = services.BuildServiceProvider();
-            
-            using var dbContext = new DocumentContext(
-                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
-            dbContext.Database.EnsureCreated();
+
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Database.EnsureCreated();
         }
 
         protected ServiceProvider ServiceProvider;
-        
+
         protected void AppendTestDataToDatabase(Document[] documents)
         {
-            using var dbContext = new DocumentContext(
-                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Documents.AddRange(documents);
             dbContext.SaveChanges();
         }
 
         protected void ClearTestData()
         {
-            using var dbContext = new DocumentContext(
-                ServiceProvider.GetRequiredService<DbContextOptions<DocumentContext>>());
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Documents.RemoveRange(dbContext.Documents);
             dbContext.SaveChanges();
         }
-        
+
         private static DbConnection CreateInMemoryDatabase()
         {
             var connection = new SqliteConnection("Filename=:memory:");

@@ -2,9 +2,10 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Models;
+using ProjectA.Core.Models;
+using ProjectA.Core.Services;
+using ProjectA.Core.Services.Exceptions;
 using ProjectA.Services;
-using ProjectA.Services.Exceptions;
 
 namespace ProjectA.Test
 {

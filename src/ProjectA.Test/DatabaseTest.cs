@@ -3,8 +3,8 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Data;
-using ProjectA.Models;
+using ProjectA.Core.Data;
+using ProjectA.Core.Models;
 
 namespace ProjectA.Test
 {

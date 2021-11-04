@@ -1,6 +1,6 @@
 using System;
 using NUnit.Framework;
-using ProjectA.Models;
+using ProjectA.Core.Models;
 
 namespace ProjectA.Test
 {
