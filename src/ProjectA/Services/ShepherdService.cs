@@ -19,19 +19,19 @@ namespace ProjectA.Services
     public class ShepherdService
     {
         private readonly HttpClient _client;
-        private readonly DocumentContext _context;
+        private readonly IDbContextFactory<DocumentContext> _contextFactory;
         private readonly IFileAppService _fileAppService;
         private readonly IOrgAppService _orgAppService;
         private string _token = string.Empty;
 
-        public ShepherdService(DocumentContext context,
+        public ShepherdService(IDbContextFactory<DocumentContext> contextFactory,
             IOrgAppService orgAppService, IFileAppService fileAppService,
             HttpClient client)
         {
             if (string.IsNullOrWhiteSpace(SdkBaseInfo.BaseUrl))
                 throw new ArgumentNullException(nameof(SdkBaseInfo.BaseUrl), "SdkBaseInfo.BaseUrl必须先设置才能正常使用接口！");
 
-            _context = context;
+            _contextFactory = contextFactory;
             _orgAppService = orgAppService;
             _fileAppService = fileAppService;
             _client = client;
@@ -92,15 +92,17 @@ namespace ProjectA.Services
 
         #region Public Methods
 
-        public int SyncDocVersionsFromEDoc()
+        public async Task<int> SyncDocVersionsFromEDocAsync()
         {
             ValidateToken();
 
-            foreach (var document in _context.Documents.Include(x => x.Snapshot))
+            await using var context = _contextFactory.CreateDbContext();
+
+            foreach (var document in context.Documents.Include(x => x.Snapshot))
             {
                 // get version info from EDoc Server
                 var verListResult = _fileAppService.GetFileVerListByFileId(_token, document.EntityId);
-                if (verListResult.Result != 0) continue; // skip if failed to get version
+                if (verListResult.Result != 0 || verListResult.Data == null) continue; // skip if failed to get version
 
                 foreach (var eDocFileVerInfoResult in verListResult.Data.OrderBy(x => ToDateTime(x.FileCreateTime)))
                 {
@@ -114,14 +116,16 @@ namespace ProjectA.Services
                 }
             }
 
-            return _context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public async Task<int> UpdateSnapshotInTargetFolderAsync()
         {
             ValidateToken();
 
-            var sources = _context.Documents.Include(x => x.Snapshot)
+            await using var context = _contextFactory.CreateDbContext();
+
+            var sources = context.Documents.Include(x => x.Snapshot)
                 .Where(x => x.SnapshotFolderId != default || x.Snapshot != null).ToList();
             var validSources = sources.Where(x => x.Versions.Any() && x.CurVersion.VersionNumber >
                 (x.Snapshot == null ? new VersionNumber(0, 0) : x.Snapshot.CurVersion.VersionNumber)).ToList();
@@ -164,7 +168,7 @@ namespace ProjectA.Services
                 }
             }
 
-            return await _context.SaveChangesAsync();
+            return await context.SaveChangesAsync();
         }
 
         #endregion
