@@ -1,0 +1,42 @@
+﻿<Window x:Class="ProjectA.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:ProjectA.Desktop.Controls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewModels="clr-namespace:ProjectA.Desktop.ViewModels"
+        xmlns:desktop="clr-namespace:ProjectA.Desktop"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
+        DataContext="{Binding Source={x:Static desktop:ViewModelLocator.MainWindowViewModel}}"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <materialDesign:DialogHost Padding="16"
+                                   VerticalAlignment="Stretch"
+                                   IsOpen="{Binding ToolbarViewModel.IsAddDocumentDialogOpen}"
+                                   DialogContent="{Binding ToolbarViewModel.DialogContent}"
+                                   CloseOnClickAway="True"
+                                   OverlayBackground="{DynamicResource PrimaryHueDarkBrush}"
+                                   DialogTheme="Inherit">
+            <DataGrid DataContext="{Binding DashboardViewModel.Documents}" ItemsSource="{Binding }"
+                      AutoGenerateColumns="False">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Delete" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Id" Binding="{Binding EntityId}" />
+                    <DataGridTextColumn Header="Cur. Version" Binding="{Binding CurVersion.VersionNumber}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </materialDesign:DialogHost>
+        <Grid Grid.Row="1" x:Name="ToolBar">
+            <controls:ToolbarControl DataContext="{Binding ToolbarViewModel}" />
+        </Grid>
+    </Grid>
+</Window>

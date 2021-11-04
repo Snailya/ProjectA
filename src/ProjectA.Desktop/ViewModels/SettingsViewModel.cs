@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using ProjectA.Core.Services;
 using ProjectA.Desktop.Annotations;
 using ProjectA.Services;
 
