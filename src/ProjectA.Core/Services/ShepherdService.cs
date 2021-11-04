@@ -101,6 +101,16 @@ namespace ProjectA.Core.Services
 
             foreach (var document in context.Documents.Include(x => x.Snapshot))
             {
+                // update filename
+                var fileInfoResult = _fileAppService.GetFileInfoById(_token, document.EntityId);
+                if (fileInfoResult.Result == 0)
+                {
+                    document.FileName = fileInfoResult.Data.FileName;
+                    document.FilePath = fileInfoResult.Data.FileNamePath;
+                    document.UpdatedBy = fileInfoResult.Data.EditorName;
+                    document.UpdatedAt = fileInfoResult.Data.FileModifyTime;
+                }
+                
                 // get version info from EDoc Server
                 var verListResult = _fileAppService.GetFileVerListByFileId(_token, document.EntityId);
                 if (verListResult.Result != 0 || verListResult.Data == null) continue; // skip if failed to get version
@@ -126,12 +136,9 @@ namespace ProjectA.Core.Services
 
             await using var context = _contextFactory.CreateDbContext();
 
-            var sources = context.Documents.Include(x => x.Snapshot)
-                .Where(x => x.SnapshotFolderId != default || x.Snapshot != null).ToList();
-            var validSources = sources.Where(x => x.Versions.Any() && x.CurVersion!.VersionNumber >
-                    (x.Snapshot?.CurVersion == null ? new VersionNumber(0, 0) : x.Snapshot.CurVersion.VersionNumber))
-                .ToList();
-
+            var validSources = context.Documents.Include(x => x.Snapshot)
+                .Where(x => x.SnapshotNeedUpdate).ToList();
+         
             foreach (var document in validSources)
             {
                 Debug.WriteLine($"SYNCHRONIZING FILE ID: {document.EntityId}");

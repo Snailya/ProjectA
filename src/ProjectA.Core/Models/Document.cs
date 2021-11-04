@@ -55,7 +55,17 @@ namespace ProjectA.Core.Models
 
         public int SnapshotFolderId { get; private set; }
 
+        public string FileName { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
+        public string UpdatedBy { get; set; } = string.Empty;
+        public DateTime UpdatedAt { get; set; }
+
         public DocVersion? CurVersion => Versions.LastOrDefault();
+
+        public bool SnapshotNeedUpdate => (CurVersion == null ? new VersionNumber(0, 0) : CurVersion.VersionNumber) >
+            (Snapshot?.CurVersion == null
+                ? new VersionNumber(0, 0)
+                : Snapshot?.CurVersion.VersionNumber) && SnapshotFolderId != 0;
 
         #endregion
 

@@ -12,5 +12,15 @@ namespace ProjectA.Core.Models
         {
             return VersionNumber < other.VersionNumber ? -1 : VersionNumber == other.VersionNumber ? 0 : 1;
         }
+
+        public static bool operator >(DocVersion a, DocVersion b)
+        {
+            return a.VersionNumber > b.VersionNumber;
+        }
+
+        public static bool operator <(DocVersion a, DocVersion b)
+        {
+            return a.VersionNumber < b.VersionNumber;
+        }
     }
 }
