@@ -11,12 +11,12 @@ using EDoc2.Sdk.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using ProjectA.Core.Data;
 using ProjectA.Core.Interfaces;
 using ProjectA.Core.Models;
 using ProjectA.Core.Services.Exceptions;
+using ProjectA.Infrastructure.Data;
 
-namespace ProjectA.Core.Services
+namespace ProjectA.Infrastructure.Services
 {
     public class SynchronizeService : ISynchronizeService
     {

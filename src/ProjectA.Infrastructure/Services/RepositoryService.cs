@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using ProjectA.Core.Data;
 using ProjectA.Core.Models;
 using ProjectA.Core.Services.Exceptions;
+using ProjectA.Infrastructure.Data;
 
-namespace ProjectA.Core.Services
+namespace ProjectA.Infrastructure.Services
 {
     public class RepositoryService
     {

@@ -2,9 +2,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ProjectA.Core.Data;
 using ProjectA.Desktop.Annotations;
 using ProjectA.Desktop.Services;
+using ProjectA.Infrastructure.Data;
 
 namespace ProjectA.Desktop.ViewModels
 {

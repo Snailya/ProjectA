@@ -10,7 +10,7 @@ namespace ProjectA.Core.Models
             return this < other ? -1 : this == other ? 0 : 1;
         }
 
-        internal bool IsMajorVersion()
+        public bool IsMajorVersion()
         {
             return Minor == 0;
         }

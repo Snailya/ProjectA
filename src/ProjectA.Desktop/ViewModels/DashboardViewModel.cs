@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
-using ProjectA.Core.Data;
 using ProjectA.Core.Models;
 using ProjectA.Desktop.Annotations;
+using ProjectA.Infrastructure.Data;
 
 namespace ProjectA.Desktop.ViewModels
 {

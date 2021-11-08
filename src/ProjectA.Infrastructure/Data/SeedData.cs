@@ -1,7 +1,7 @@
 using System.Linq;
 using ProjectA.Core.Models;
 
-namespace ProjectA.Core.Data
+namespace ProjectA.Infrastructure.Data
 {
     public static class SeedData
     {

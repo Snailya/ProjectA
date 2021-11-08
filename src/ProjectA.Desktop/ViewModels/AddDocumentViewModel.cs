@@ -2,9 +2,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
-using ProjectA.Core.Data;
 using ProjectA.Core.Models;
 using ProjectA.Desktop.Annotations;
+using ProjectA.Infrastructure.Data;
 
 namespace ProjectA.Desktop.ViewModels
 {

@@ -11,12 +11,15 @@
       <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
       <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ProjectA.Core\ProjectA.Core.csproj" />
+      <ProjectReference Include="..\ProjectA.Infrastructure\ProjectA.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

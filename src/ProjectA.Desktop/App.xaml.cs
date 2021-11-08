@@ -8,11 +8,11 @@ using EDoc2.ServiceProxy.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ProjectA.Core.Data;
 using ProjectA.Core.Interfaces;
-using ProjectA.Core.Services;
 using ProjectA.Desktop.Services;
 using ProjectA.Desktop.ViewModels;
+using ProjectA.Infrastructure.Data;
+using ProjectA.Infrastructure.Services;
 
 namespace ProjectA.Desktop
 {

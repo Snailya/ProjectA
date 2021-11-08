@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace ProjectA.Core.Data
+namespace ProjectA.Infrastructure.Data
 {
     public class DocumentContextFactory : IDesignTimeDbContextFactory<DocumentContext>
     {

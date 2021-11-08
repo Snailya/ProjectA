@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ProjectA.Core.Models;
 
-namespace ProjectA.Core.Data
+namespace ProjectA.Infrastructure.Data
 {
     public class DocumentContext : DbContext
     {
-        private static readonly ILoggerFactory LoggerFactory =
-            Microsoft.Extensions.Logging.LoggerFactory.Create(builder => builder.AddConsole());
-
         public DocumentContext(DbContextOptions<DocumentContext> options)
             : base(options)
         {
@@ -21,7 +17,6 @@ namespace ProjectA.Core.Data
             if (optionsBuilder.IsConfigured) return;
 
             optionsBuilder.UseSqlite("Data Source=document.db;Foreign Keys=False");
-            optionsBuilder.UseLoggerFactory(LoggerFactory);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
