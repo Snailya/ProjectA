@@ -1,0 +1,44 @@
+<UserControl x:Class="ProjectA.Desktop.Controls.DashboardControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModels="clr-namespace:ProjectA.Desktop.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:DashboardViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <DataGrid DataContext="{Binding Documents}" ItemsSource="{Binding }"
+              AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Delete" />
+            </ContextMenu>
+        </DataGrid.ContextMenu>
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Id" Binding="{Binding EntityId}" />
+            <DataGridTextColumn Header="Name" Binding="{Binding FileName}" />
+            <DataGridTemplateColumn Header="Cur. Version">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <materialDesign:Badged>
+                            <materialDesign:Badged.Style>
+                                <Style TargetType="materialDesign:Badged">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SnapshotNeedUpdate}" Value="True">
+                                            <Setter Property="Badge" Value="{materialDesign:PackIcon InformationVariant}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </materialDesign:Badged.Style>
+                            <TextBlock Text="{Binding CurVersion.VersionNumber}" />
+                        </materialDesign:Badged>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+
+            <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" />
+            <DataGridTextColumn Header="Updated By" Binding="{Binding UpdatedBy}" />
+            <DataGridTextColumn Header="Location" Binding="{Binding FilePath}" />
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>

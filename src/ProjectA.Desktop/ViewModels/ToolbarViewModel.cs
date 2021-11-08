@@ -3,42 +3,33 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Microsoft.Extensions.DependencyInjection;
 using ProjectA.Desktop.Annotations;
 using ProjectA.Desktop.Controls;
-using ProjectA.Services;
 
 namespace ProjectA.Desktop.ViewModels
 {
     public class ToolbarViewModel : INotifyPropertyChanged
     {
-        public ToolbarViewModel( )
+        #region Constructors
+
+        public ToolbarViewModel()
         {
             OpenAddNewDocumentDialogCommand = new AnotherCommandImplementation(OpenAddNewDocumentDialog);
-            OpenSettingsDialogCommand = new AnotherCommandImplementation(OpenSettingsDialog);
-            ForceRefreshDocumentsCommand = new AnotherCommandImplementation(ForceRefreshDocuments);
+            ForceRefreshDocumentsCommand = new AnotherCommandImplementation(RefreshDocuments);
+            ToggleButtonClickedCommand = new AnotherCommandImplementation(ToggleButtonClicked);
         }
 
+        #endregion
 
-        public ICommand OpenAddNewDocumentDialogCommand { get; }
-        public ICommand ForceRefreshDocumentsCommand { get; }
-        public ICommand OpenSettingsDialogCommand { get; }
-        public object? DialogContent { get; set; }
-        public bool IsAddDocumentDialogOpen { get; set; }
-        public bool IsSettingsDialogOpen { get; set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler OnRefreshDocumentsButtonClicked;
+        public event EventHandler<bool> OnSynchronizeButtonToggled;
 
-        private void OpenSettingsDialog(object obj)
+
+        private void RefreshDocuments(object obj)
         {
-            DialogContent = new SettingsControl();
-            IsSettingsDialogOpen = true;        
-        }
-
-        private void ForceRefreshDocuments(object obj)
-        {
-            ViewModelLocator.MainWindowViewModel.SynchronizeDataFromEDoc();
-            ViewModelLocator.MainWindowViewModel.DashboardViewModel.ReloadDocuments();
+            OnRefreshDocumentsButtonClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void OpenAddNewDocumentDialog(object obj)
@@ -47,11 +38,32 @@ namespace ProjectA.Desktop.ViewModels
             IsAddDocumentDialogOpen = true;
         }
 
+        private void ToggleButtonClicked(object obj)
+        {
+            OnSynchronizeButtonToggled?.Invoke(this, IsSynchronizing);
+        }
 
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        #region Commands
+
+        public ICommand OpenAddNewDocumentDialogCommand { get; }
+        public ICommand ForceRefreshDocumentsCommand { get; }
+        public ICommand ToggleButtonClickedCommand { get; }
+
+        #endregion
+
+        #region Properties
+
+        public object? DialogContent { get; set; }
+        public bool IsAddDocumentDialogOpen { get; set; }
+        public bool IsListening { get; set; } = true;
+        public bool IsSynchronizing { get; set; }
+
+        #endregion
     }
 }

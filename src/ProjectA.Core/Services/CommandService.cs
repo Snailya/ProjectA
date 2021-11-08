@@ -9,12 +9,12 @@ namespace ProjectA.Services
     public class CommandService
     {
         private readonly RepositoryService _repositoryService;
-        private readonly ShepherdService _shepherdService;
+        private readonly SynchronizeService _synchronizeService;
 
-        public CommandService(RepositoryService repositoryService, ShepherdService shepherdService)
+        public CommandService(RepositoryService repositoryService, SynchronizeService synchronizeService)
         {
             _repositoryService = repositoryService;
-            _shepherdService = shepherdService;
+            _synchronizeService = synchronizeService;
         }
 
         private static void DisplayInformation()

@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace ProjectA.Desktop.Controls
 {
-    public partial class SettingsControl : UserControl
+    public partial class DashboardControl : UserControl
     {
-        public SettingsControl()
+        public DashboardControl()
         {
             InitializeComponent();
         }

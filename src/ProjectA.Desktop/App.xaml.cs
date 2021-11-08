@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using EDoc2.Sdk;
 using EDoc2.ServiceProxy;
 using EDoc2.ServiceProxy.Client;
 using EDoc2.ServiceProxy.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjectA.Core.Data;
+using ProjectA.Core.Interfaces;
 using ProjectA.Core.Services;
+using ProjectA.Desktop.Services;
 using ProjectA.Desktop.ViewModels;
-using ProjectA.Services;
 
 namespace ProjectA.Desktop
 {
@@ -26,36 +25,22 @@ namespace ProjectA.Desktop
 
         public App()
         {
-            Host = CreateDefaultHost().Build();
+            Host = CreateHostBuilder().Build();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
+
             // run hosted services
             await Host.RunAsync();
         }
 
-        private static IHostBuilder CreateDefaultHost()
+        private static IHostBuilder CreateHostBuilder()
         {
-            return new HostBuilder()
-                .ConfigureHostConfiguration(builder =>
-                {
-                })
-                .ConfigureAppConfiguration((ctx, builder) =>
-                {
-                    builder
-                        .SetBasePath(AppContext.BaseDirectory)
-                        .AddJsonFile("appsettings.json", true, true)
-                        .AddJsonFile($"appsettings.{ctx.HostingEnvironment.EnvironmentName}.json", true, true)
-                        .AddEnvironmentVariables();
-                })
+            return Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder()
                 .ConfigureServices((ctx, services) =>
                 {
-                    // register logging
-                    services.AddLogging();
-
                     // register db and initialize
                     services.AddDbContextFactory<DocumentContext>(options =>
                         options.UseInMemoryDatabase("InMemory"));
@@ -83,21 +68,13 @@ namespace ProjectA.Desktop
                     services.AddHttpClient();
 
                     // register shepherd service
+                    services.AddSingleton<ISynchronizeService, SynchronizeService>();
                     services.AddSingleton<ShepherdService>();
-
-                    // register repository service
-                    services.AddSingleton<RepositoryService>();
-
-                    // register hosted services
-                    // services.AddHostedService<CustomHostService>();
+                    services.AddHostedService(provider => provider.GetService<ShepherdService>());
 
                     // register wpf
-                    services.AddTransient<AddDocumentViewModel>();
-                    
                     services.AddSingleton<MainWindowViewModel>();
-                    services.AddSingleton<DashboardViewModel>();
-                    services.AddSingleton<ToolbarViewModel>();
-
+                    services.AddSingleton<AddDocumentViewModel>();
                 });
         }
     }

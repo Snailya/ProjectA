@@ -9,7 +9,7 @@ using ProjectA.Desktop.Annotations;
 
 namespace ProjectA.Desktop.ViewModels
 {
-    public class DashboardViewModel:INotifyPropertyChanged
+    public class DashboardViewModel : INotifyPropertyChanged
     {
         private readonly IDbContextFactory<DocumentContext> _dbContextFactory;
 
@@ -22,13 +22,14 @@ namespace ProjectA.Desktop.ViewModels
 
         public ObservableCollection<Document> Documents { get; set; }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public void ReloadDocuments()
         {
-            var context = _dbContextFactory.CreateDbContext();
-            Documents = new ObservableCollection<Document>(context.Documents.Include(x => x.Snapshot).ToList());
+            using var context = _dbContextFactory.CreateDbContext();
+            Documents = new ObservableCollection<Document>(context.Documents.Include(x => x.Snapshot)
+                .Where(x => x.Snapshot != null || x.SnapshotFolderId != default).ToList());
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

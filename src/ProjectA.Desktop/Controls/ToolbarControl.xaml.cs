@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ProjectA.Desktop.Controls
@@ -8,5 +9,6 @@ namespace ProjectA.Desktop.Controls
         {
             InitializeComponent();
         }
+        
     }
 }

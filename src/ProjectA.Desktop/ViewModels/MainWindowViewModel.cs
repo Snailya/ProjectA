@@ -1,32 +1,36 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using ProjectA.Core.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using ProjectA.Core.Data;
 using ProjectA.Desktop.Annotations;
-using ProjectA.Services;
+using ProjectA.Desktop.Services;
 
 namespace ProjectA.Desktop.ViewModels
 {
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
-        private readonly ShepherdService _shepherdService;
+        private readonly ILogger<MainWindowViewModel> _logger;
 
-        public MainWindowViewModel(DashboardViewModel dashboardViewModel, ToolbarViewModel toolbarViewModel, ShepherdService shepherdService)
+        public MainWindowViewModel(ILogger<MainWindowViewModel> logger,
+            IDbContextFactory<DocumentContext> dbContextFactory,
+            ShepherdService service)
         {
-            _shepherdService = shepherdService;
-            DashboardViewModel = dashboardViewModel;
-            ToolbarViewModel = toolbarViewModel;
+            _logger = logger;
+            DashboardViewModel = new DashboardViewModel(dbContextFactory);
+            ToolbarViewModel = new ToolbarViewModel();
 
-            DashboardViewModel.ReloadDocuments();
+            service.AfterExecute += (sender, args) =>
+            {
+                _logger.LogInformation("Reload document by {FunctionName}", nameof(service.AfterExecute));
+                DashboardViewModel.ReloadDocuments();
+            };
+            ToolbarViewModel.OnRefreshDocumentsButtonClicked += (sender, args) => { service.ExecuteImmediately(); };
+            ToolbarViewModel.OnSynchronizeButtonToggled += (sender, b) => { service.EnableSync = b; };
         }
 
         public DashboardViewModel DashboardViewModel { get; set; }
         public ToolbarViewModel ToolbarViewModel { get; set; }
-
-
-        public void SynchronizeDataFromEDoc()
-        {
-            _shepherdService.SyncDocVersionsFromEDocAsync();
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

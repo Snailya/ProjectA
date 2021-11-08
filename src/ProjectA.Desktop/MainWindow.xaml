@@ -9,7 +9,7 @@
         xmlns:desktop="clr-namespace:ProjectA.Desktop"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
         DataContext="{Binding Source={x:Static desktop:ViewModelLocator.MainWindowViewModel}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="ProjectA" Height="Auto" Width="Auto">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -22,18 +22,7 @@
                                    CloseOnClickAway="True"
                                    OverlayBackground="{DynamicResource PrimaryHueDarkBrush}"
                                    DialogTheme="Inherit">
-            <DataGrid DataContext="{Binding DashboardViewModel.Documents}" ItemsSource="{Binding }"
-                      AutoGenerateColumns="False">
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Delete" />
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Id" Binding="{Binding EntityId}" />
-                    <DataGridTextColumn Header="Cur. Version" Binding="{Binding CurVersion.VersionNumber}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            <controls:DashboardControl DataContext="{Binding DashboardViewModel}" />
         </materialDesign:DialogHost>
         <Grid Grid.Row="1" x:Name="ToolBar">
             <controls:ToolbarControl DataContext="{Binding ToolbarViewModel}" />

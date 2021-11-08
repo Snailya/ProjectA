@@ -9,6 +9,7 @@ using EDoc2.IAppService.Model;
 using EDoc2.Sdk;
 using EDoc2.Sdk.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ProjectA.Core.Data;
 using ProjectA.Core.Interfaces;
@@ -17,21 +18,23 @@ using ProjectA.Core.Services.Exceptions;
 
 namespace ProjectA.Core.Services
 {
-    public class ShepherdService : IShepherdService
+    public class SynchronizeService : ISynchronizeService
     {
         private readonly HttpClient _client;
         private readonly IDbContextFactory<DocumentContext> _contextFactory;
         private readonly IFileAppService _fileAppService;
+        private readonly ILogger<SynchronizeService> _logger;
         private readonly IOrgAppService _orgAppService;
         private string _token = string.Empty;
 
-        public ShepherdService(IDbContextFactory<DocumentContext> contextFactory,
+        public SynchronizeService(ILogger<SynchronizeService> logger, IDbContextFactory<DocumentContext> contextFactory,
             IOrgAppService orgAppService, IFileAppService fileAppService,
             HttpClient client)
         {
             if (string.IsNullOrWhiteSpace(SdkBaseInfo.BaseUrl))
                 throw new ArgumentNullException(nameof(SdkBaseInfo.BaseUrl), "SdkBaseInfo.BaseUrl必须先设置才能正常使用接口！");
 
+            _logger = logger;
             _contextFactory = contextFactory;
             _orgAppService = orgAppService;
             _fileAppService = fileAppService;
@@ -93,8 +96,10 @@ namespace ProjectA.Core.Services
 
         #region Public Methods
 
-        public async Task<int> SyncDocVersionsFromEDocAsync()
+        public async Task<int> Down()
         {
+            _logger.LogInformation(nameof(Down));
+
             ValidateToken();
 
             await using var context = _contextFactory.CreateDbContext();
@@ -110,7 +115,7 @@ namespace ProjectA.Core.Services
                     document.UpdatedBy = fileInfoResult.Data.EditorName;
                     document.UpdatedAt = fileInfoResult.Data.FileModifyTime;
                 }
-                
+
                 // get version info from EDoc Server
                 var verListResult = _fileAppService.GetFileVerListByFileId(_token, document.EntityId);
                 if (verListResult.Result != 0 || verListResult.Data == null) continue; // skip if failed to get version
@@ -130,28 +135,27 @@ namespace ProjectA.Core.Services
             return await context.SaveChangesAsync();
         }
 
-        public async Task<int> UpdateSnapshotInTargetFolderAsync()
+        public async Task<int> Up()
         {
+            _logger.LogInformation(nameof(Up));
+
             ValidateToken();
 
             await using var context = _contextFactory.CreateDbContext();
 
-            var validSources = context.Documents.Include(x => x.Snapshot)
-                .Where(x => x.SnapshotNeedUpdate).ToList();
-         
-            foreach (var document in validSources)
-            {
-                Debug.WriteLine($"SYNCHRONIZING FILE ID: {document.EntityId}");
+            var documents =
+                context.Documents.Include(x => x.Snapshot)
+                    .AsEnumerable(); // cast to IEnumerable to avoid SnapshotNeedUpdate property not mapped exception
+            var sources = documents.Where(x => x.SnapshotNeedUpdate).ToList();
 
+            foreach (var document in sources)
+            {
                 var versionsNeedToUpdate = document.Versions.Where(x =>
                     x.VersionNumber > (document.Snapshot?.CurVersion == null
                         ? new VersionNumber(0, 0)
                         : document.Snapshot.CurVersion.VersionNumber)).ToList();
                 foreach (var version in versionsNeedToUpdate)
                 {
-                    Debug.WriteLine($"VERSION ID: {version.VersionId}");
-                    Debug.WriteLine($"VERSION NUMBER: {version.VersionNumber}");
-
                     // get file name
                     var documentInfoResult = _fileAppService.GetFileInfoById(_token, document.EntityId);
                     var fileName = documentInfoResult.Data.FileName;

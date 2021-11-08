@@ -19,7 +19,7 @@ namespace ProjectA.Desktop.ViewModels
             CancelCommand = new AnotherCommandImplementation(Cancel);
         }
 
-        public int Id { get; set; } = 669315;
+        public int Id { get; set; } = 669486;
         public int SnapshotFolderId { get; set; } = 75696;
 
         public ICommand SubmitCommand { get; }
@@ -37,7 +37,7 @@ namespace ProjectA.Desktop.ViewModels
         private void Submit(object o)
         {
             var document = new Document(Id, SnapshotFolderId);
-            var context = _dbContextFactory.CreateDbContext();
+            using var context = _dbContextFactory.CreateDbContext();
             context.Documents.Add(document);
             context.SaveChanges();
             
