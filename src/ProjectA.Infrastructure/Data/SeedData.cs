@@ -1,5 +1,6 @@
 using System.Linq;
 using ProjectA.Core.Models;
+using ProjectA.Core.Models.DocAggregate;
 
 namespace ProjectA.Infrastructure.Data
 {
@@ -17,7 +18,7 @@ namespace ProjectA.Infrastructure.Data
             }
 
             var document1 = new Document(668407, 75696);
-            document1.UpdateVersion(new DocVersion {VersionId = 810828, VersionNumber = new VersionNumber(1, 0)});
+            document1.UpdateVersion(new DocumentVersion {VersionId = 810828, VersionNumber = new DocumentVersionNumber(1, 0)});
             context.Documents.Add(document1);
             context.SaveChanges();
         }

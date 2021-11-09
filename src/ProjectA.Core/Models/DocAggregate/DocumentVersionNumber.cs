@@ -1,11 +1,11 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace ProjectA.Core.Models
+namespace ProjectA.Core.Models.DocAggregate
 {
-    public record VersionNumber(int Major, int Minor) : IComparable<VersionNumber>
+    public record DocumentVersionNumber(int Major, int Minor) : IComparable<DocumentVersionNumber>
     {
-        public int CompareTo(VersionNumber other)
+        public int CompareTo(DocumentVersionNumber other)
         {
             return this < other ? -1 : this == other ? 0 : 1;
         }
@@ -15,7 +15,7 @@ namespace ProjectA.Core.Models
             return Minor == 0;
         }
 
-        public static VersionNumber FromFileCurVerNumStr(string fileCurVerNumStr)
+        public static DocumentVersionNumber FromFileCurVerNumStr(string fileCurVerNumStr)
         {
             if (!Regex.IsMatch(fileCurVerNumStr, @"^(\d+).(\d+)$"))
                 throw new ArgumentException("{0} format not match", nameof(fileCurVerNumStr));
@@ -23,15 +23,15 @@ namespace ProjectA.Core.Models
             var subStrings = fileCurVerNumStr.Split(".");
             var major = int.Parse(subStrings[0]);
             var minor = int.Parse(subStrings[1]);
-            return new VersionNumber(major, minor);
+            return new DocumentVersionNumber(major, minor);
         }
 
-        public static bool operator >(VersionNumber a, VersionNumber b)
+        public static bool operator >(DocumentVersionNumber a, DocumentVersionNumber b)
         {
             return a.Major > b.Major || a.Major == b.Major && a.Minor > b.Minor;
         }
 
-        public static bool operator <(VersionNumber a, VersionNumber b)
+        public static bool operator <(DocumentVersionNumber a, DocumentVersionNumber b)
         {
             return b.Major > a.Major || b.Major == a.Major && b.Minor > a.Minor;
         }
