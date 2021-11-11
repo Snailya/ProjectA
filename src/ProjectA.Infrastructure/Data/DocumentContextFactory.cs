@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace ProjectA.Infrastructure.Data
 {
-    public class DocumentContextFactory : IDesignTimeDbContextFactory<DocumentContext>
+    public class DocumentContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         private readonly IMediator _mediator;
 
@@ -13,12 +13,12 @@ namespace ProjectA.Infrastructure.Data
             _mediator = mediator;
         }
 
-        public DocumentContext CreateDbContext(string[] args)
+        public AppDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<DocumentContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
             optionsBuilder.UseSqlite("Data Source=document.db");
 
-            return new DocumentContext(optionsBuilder.Options, _mediator);
+            return new AppDbContext(optionsBuilder.Options, _mediator);
         }
     }
 }

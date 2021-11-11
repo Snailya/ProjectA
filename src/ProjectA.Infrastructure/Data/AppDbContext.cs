@@ -5,15 +5,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectA.Core.Models.DocAggregate;
 using ProjectA.Core.Models.DocSetAggregate;
-using ProjectA.Core.Shared;
+using ProjectA.SharedKernel;
 
 namespace ProjectA.Infrastructure.Data
 {
-    public class DocumentContext : DbContext
+    public class AppDbContext : DbContext
     {
         private readonly IMediator _mediator;
 
-        public DocumentContext(DbContextOptions<DocumentContext> options, IMediator mediator)
+        public AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator)
             : base(options)
         {
             _mediator = mediator;

@@ -1,5 +1,5 @@
 using System;
-using ProjectA.Core.Shared;
+using ProjectA.SharedKernel;
 
 namespace ProjectA.Core.Models.DocAggregate.Events
 {
