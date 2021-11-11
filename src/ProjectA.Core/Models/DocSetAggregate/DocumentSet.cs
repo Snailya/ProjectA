@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using ProjectA.Core.Shared;
+using ProjectA.SharedKernel;
+using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Core.Models.DocSetAggregate
 {
-    public class DocumentSet : BaseEntity
+    public class DocumentSet : BaseEntity,IAggregateRoot
     {
         private readonly List<DocumentSetLog> _logs = new();
 

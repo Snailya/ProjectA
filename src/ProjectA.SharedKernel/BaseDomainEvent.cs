@@ -1,7 +1,7 @@
 using System;
 using MediatR;
 
-namespace ProjectA.Core.Shared
+namespace ProjectA.SharedKernel
 {
     public abstract class BaseDomainEvent : INotification
     {

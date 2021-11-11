@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ProjectA.Core.Shared
+namespace ProjectA.SharedKernel
 {
     public abstract class BaseEntity
     {

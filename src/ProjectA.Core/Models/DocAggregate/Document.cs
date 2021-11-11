@@ -3,11 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectA.Core.Models.DocAggregate.Events;
-using ProjectA.Core.Shared;
+using ProjectA.SharedKernel;
+using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Core.Models.DocAggregate
 {
-    public class Document : BaseEntity
+    public class Document : BaseEntity,IAggregateRoot
     {
         #region Private Properties
 
