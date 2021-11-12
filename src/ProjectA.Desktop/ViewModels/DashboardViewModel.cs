@@ -1,34 +1,33 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
-using ProjectA.Core.Models;
+using System.Threading.Tasks;
+using ProjectA.Core.Models.DocAggregate;
+using ProjectA.Core.Models.DocAggregate.Specifications;
 using ProjectA.Desktop.Annotations;
-using ProjectA.Infrastructure.Data;
+using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Desktop.ViewModels
 {
     public class DashboardViewModel : INotifyPropertyChanged
     {
-        private readonly IDbContextFactory<DocumentContext> _dbContextFactory;
+        private readonly IRepository<Document> _repository;
 
-        public DashboardViewModel(IDbContextFactory<DocumentContext> dbContextFactory)
+        public DashboardViewModel(IRepository<Document> repository)
         {
-            _dbContextFactory = dbContextFactory;
+            _repository = repository;
 
-            ReloadDocuments();
+            ReloadDocuments().GetAwaiter().GetResult();
         }
 
         public ObservableCollection<Document> Documents { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void ReloadDocuments()
+        public async Task ReloadDocuments()
         {
-            using var context = _dbContextFactory.CreateDbContext();
-            Documents = new ObservableCollection<Document>(context.Documents.Include(x => x.Snapshot)
-                .Where(x => x.Snapshot != null || x.SnapshotFolderId != default).ToList());
+            var spec = new DocumentsWithLinkedDocSpec();
+            Documents = new ObservableCollection<Document>((await _repository.ListAsync(spec)));
         }
 
         [NotifyPropertyChangedInvocator]

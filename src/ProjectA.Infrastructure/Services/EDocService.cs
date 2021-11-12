@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ProjectA.Core.Interfaces;
 using ProjectA.Core.Models.DocAggregate;
-using ProjectA.Core.Services.Exceptions;
+using ProjectA.Infrastructure.Services.Exceptions;
 
 namespace ProjectA.Infrastructure.Services
 {
@@ -77,6 +77,10 @@ namespace ProjectA.Infrastructure.Services
 
         public int CopySingleDocument(int sourceId, int targetFolderId)
         {
+            _logger.LogInformation(nameof(CopySingleDocument));
+            
+            ValidateToken();
+            
             var copy = _docAppService.CopySingleFile(new CopySingleFileDto
                 {FileId = sourceId, Token = _token, TargetFolderId = targetFolderId});
             if (copy.Result != 0)
@@ -87,24 +91,36 @@ namespace ProjectA.Infrastructure.Services
 
         public void PublishVersion(int fileId)
         {
+            _logger.LogInformation(nameof(PublishVersion));
+
+            ValidateToken();
+            
             _fileAppService.PublishFileVersion(new FileDto
                 {FileId = fileId, Token = _token});
         }
 
         public Document GetDocument(int fileId)
         {
+            _logger.LogInformation(nameof(GetDocument));
+
+            ValidateToken();
+            
             var file = _fileAppService.GetFileInfoById(_token, fileId);
             if (file.Result != 0) throw new EDocApiException("Unable to get file info from EDoc server.");
 
             return new Document(file.Data.FileId)
             {
-                FileName = file.Data.FileName, FilePath = file.Data.FilePath, UpdatedAt = file.Data.FileModifyTime,
+                FileName = file.Data.FileName, FilePath = file.Data.FilePath,FileNamePath = file.Data.FileNamePath, UpdatedAt = file.Data.FileModifyTime,
                 UpdatedBy = file.Data.EditorName
             };
         }
 
         public IEnumerable<DocumentVersion> GetVersions(int fileId)
         {
+            _logger.LogInformation(nameof(GetVersions));
+
+            ValidateToken();
+            
             var versions = _fileAppService.GetFileVerListByFileId(_token, fileId);
             if (versions.Result != 0)
                 throw new EDocApiException("Unable to get version info from EDoc server.");

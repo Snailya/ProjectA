@@ -12,5 +12,4 @@ namespace ProjectA.Desktop.Controls
             DataContext = App.Host.Services.GetRequiredService<AddDocumentViewModel>();
         }
     }
-    
 }

@@ -1,19 +1,7 @@
-using System;
-using System.Linq;
-using EDoc2.IAppService;
-using EDoc2.IAppService.Model;
-using EDoc2.Sdk;
-using EDoc2.ServiceProxy;
-using EDoc2.ServiceProxy.Client;
-using EDoc2.ServiceProxy.DynamicProxy;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
-
 namespace ProjectA.Test.UnitTests
 {
     public class EDocServiceTest
     {
-        
         // [Test]
         // public void UpdateDocumentAsync_ShouldFillUpDocumentInfo_IfDocumentVersionExist()
         // {

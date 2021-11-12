@@ -21,15 +21,16 @@
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
                         <materialDesign:Badged>
-                            <materialDesign:Badged.Style>
-                                <Style TargetType="materialDesign:Badged">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SnapshotNeedUpdate}" Value="True">
-                                            <Setter Property="Badge" Value="{materialDesign:PackIcon InformationVariant}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </materialDesign:Badged.Style>
+                            <!-- <materialDesign:Badged.Style> -->
+                            <!--     <Style TargetType="materialDesign:Badged"> -->
+                            <!--         <Style.Triggers> -->
+                            <!--             <DataTrigger Binding="{Binding LinkedDocNeedUpdate}" Value="True"> -->
+                            <!--                 <Setter Property="Badge" -->
+                            <!--                         Value="{materialDesign:PackIcon InformationVariant}" /> -->
+                            <!--             </DataTrigger> -->
+                            <!--         </Style.Triggers> -->
+                            <!--     </Style> -->
+                            <!-- </materialDesign:Badged.Style> -->
                             <TextBlock Text="{Binding CurVersion.VersionNumber}" />
                         </materialDesign:Badged>
                     </DataTemplate>
@@ -38,7 +39,7 @@
 
             <DataGridTextColumn Header="Updated At" Binding="{Binding UpdatedAt}" />
             <DataGridTextColumn Header="Updated By" Binding="{Binding UpdatedBy}" />
-            <DataGridTextColumn Header="Location" Binding="{Binding FilePath}" />
+            <DataGridTextColumn Header="Location" Binding="{Binding FileNamePath}" />
         </DataGrid.Columns>
     </DataGrid>
 </UserControl>

@@ -10,13 +10,14 @@ using NUnit.Framework;
 using ProjectA.Core.Interfaces;
 using ProjectA.Core.Models.DocAggregate;
 using ProjectA.Core.Models.DocAggregate.Specifications;
+using ProjectA.Core.Services;
 using ProjectA.Infrastructure.Services;
 using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Test.UnitTests
 {
     [TestFixture]
-    public class SynchronizeServiceTest
+    public class DocServiceTest
     {
         [TearDown]
         public void ClearMockSetup()
@@ -25,14 +26,14 @@ namespace ProjectA.Test.UnitTests
             _dmsServiceMock.Invocations.Clear();
         }
 
-        private readonly Mock<ILogger<SynchronizeService>> _loggerMock = new();
+        private readonly Mock<ILogger<DocService>> _loggerMock = new();
         private readonly Mock<IRepository<Document>> _repositoryMock = new();
         private readonly Mock<IDMSService> _dmsServiceMock = new();
-        private readonly ISynchronizeService _synchronizeService;
+        private readonly IDocService _docService;
 
-        public SynchronizeServiceTest()
+        public DocServiceTest()
         {
-            _synchronizeService = new SynchronizeService(_loggerMock.Object, _repositoryMock.Object,
+            _docService = new DocService(_loggerMock.Object, _repositoryMock.Object,
                 _dmsServiceMock.Object);
         }
 
@@ -54,7 +55,7 @@ namespace ProjectA.Test.UnitTests
             _dmsServiceMock.Setup(x => x.GetDocument(entityId)).Returns(documentRemoted);
 
             // act
-            var actual = await _synchronizeService.Down(entityId);
+            var actual = await _docService.Down(entityId);
 
             // assert
             _repositoryMock.Verify(x => x.GetBySpecAsync(It.IsAny<DocumentByEntityIdSpec>(), new CancellationToken()),
@@ -74,7 +75,7 @@ namespace ProjectA.Test.UnitTests
                 .ReturnsAsync((Document) null);
 
             // act & assert
-            Assert.ThrowsAsync<Exception>(() => _synchronizeService.Down(entityId));
+            Assert.ThrowsAsync<Exception>(() => _docService.Down(entityId));
         }
 
         [Test]
@@ -85,7 +86,7 @@ namespace ProjectA.Test.UnitTests
                 .Returns(new Random().Next);
 
             // act
-            var copy = await _synchronizeService.CopyDocumentAsync(new Random().Next(), new Random().Next());
+            var copy = await _docService.CopyDocumentAsync(new Random().Next(), new Random().Next());
 
             // assert
             _dmsServiceMock.Verify(x => x.CopySingleDocument(It.IsAny<int>(), It.IsAny<int>()), Times.Once);
@@ -116,7 +117,7 @@ namespace ProjectA.Test.UnitTests
             _dmsServiceMock.Setup(x => x.UpdateVersionAsync(It.IsAny<int>(), It.IsAny<Stream>()));
 
             // act
-            await _synchronizeService.SynchronizeDocument(sourceId, targetId);
+            await _docService.SynchronizeDocument(sourceId, targetId);
 
             // assert
             _dmsServiceMock.Verify(x => x.GetVersions(It.IsAny<int>()), Times.Exactly(2));

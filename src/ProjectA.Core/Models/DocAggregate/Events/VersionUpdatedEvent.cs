@@ -5,11 +5,11 @@ namespace ProjectA.Core.Models.DocAggregate.Events
 {
     public class VersionUpdatedEvent : BaseDomainEvent
     {
-        public VersionUpdatedEvent(Guid id)
+        public VersionUpdatedEvent(Document document)
         {
-            Guid = id;
+            Document = document;
         }
 
-        public Guid Guid { get; set; }
+        public Document Document { get; set; }
     }
 }

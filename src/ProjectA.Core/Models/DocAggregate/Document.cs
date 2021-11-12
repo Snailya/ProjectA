@@ -8,7 +8,7 @@ using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Core.Models.DocAggregate
 {
-    public class Document : BaseEntity,IAggregateRoot
+    public class Document : BaseEntity, IAggregateRoot
     {
         #region Private Properties
 
@@ -41,7 +41,7 @@ namespace ProjectA.Core.Models.DocAggregate
                     "A document can't have two version with the same version number.");
 
             _versions.Add(newDocumentVersion);
-            Events.Add(new VersionUpdatedEvent(this.Guid));
+            Events.Add(new VersionUpdatedEvent(this));
         }
 
         #endregion
@@ -57,18 +57,20 @@ namespace ProjectA.Core.Models.DocAggregate
 
         #endregion
 
-        public int EntityId { get; } // XXX: private set is used by efcore
+        public int EntityId { get; private set; } // XXX: private set is used by efcore
         public int LinkedDocFolderId { get; private set; }
         public string FileName { get; set; } = string.Empty;
         public string FilePath { get; set; } = string.Empty;
+        public string FileNamePath { get; set; } = string.Empty;
         public string UpdatedBy { get; set; } = string.Empty;
         public DateTime UpdatedAt { get; set; }
         public DocumentVersion? CurVersion => Versions.LastOrDefault();
-
-        public bool LinkedDocNeedUpdate => (CurVersion == null ? new DocumentVersionNumber(0, 0) : CurVersion.VersionNumber) >
-            (LinkedDoc?.CurVersion == null
-                ? new DocumentVersionNumber(0, 0)
-                : LinkedDoc?.CurVersion.VersionNumber) && LinkedDocFolderId != 0;
+        
+        // public bool LinkedDocNeedUpdate =>
+        //     (CurVersion == null ? new DocumentVersionNumber(0, 0) : CurVersion.VersionNumber) >
+        //     (LinkedDoc?.CurVersion == null
+        //         ? new DocumentVersionNumber(0, 0)
+        //         : LinkedDoc?.CurVersion.VersionNumber) && LinkedDocFolderId != 0;
 
         #endregion
 

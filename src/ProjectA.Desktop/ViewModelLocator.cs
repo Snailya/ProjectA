@@ -5,6 +5,6 @@ namespace ProjectA.Desktop
 {
     public static class ViewModelLocator
     {
-        public static MainWindowViewModel MainWindowViewModel => App.Host.Services.GetRequiredService<MainWindowViewModel>();
+        public static MainWindowViewModel MainWindowViewModel;
     }
 }

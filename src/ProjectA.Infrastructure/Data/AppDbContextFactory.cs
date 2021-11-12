@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace ProjectA.Infrastructure.Data
 {
-    public class DocumentContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         private readonly IMediator _mediator;
 
-        public DocumentContextFactory(IMediator mediator)
+        public AppDbContextFactory(IMediator mediator)
         {
             _mediator = mediator;
         }

@@ -7,28 +7,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
-      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.11" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-      <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
+        <PackageReference Include="MaterialDesignThemes" Version="4.2.1" />
+        <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
+        <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="5.0.11" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.11" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ProjectA.Core\ProjectA.Core.csproj" />
-      <ProjectReference Include="..\ProjectA.Infrastructure\ProjectA.Infrastructure.csproj" />
+        <ProjectReference Include="..\ProjectA.Core\ProjectA.Core.csproj" />
+        <ProjectReference Include="..\ProjectA.Infrastructure\ProjectA.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
-      </Reference>
-      <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
-      </Reference>
+        <Reference Include="EDoc2.Sdk, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.Sdk.dll</HintPath>
+        </Reference>
+        <Reference Include="EDoc2.ServiceProxy, Version=5.13.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\..\lib\EDoc2.ServiceProxy.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

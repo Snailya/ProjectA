@@ -3,8 +3,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using ProjectA.Core.Data;
-using ProjectA.Core.Models;
+using ProjectA.Core.Models.DocAggregate;
+using ProjectA.Infrastructure.Data;
 
 namespace ProjectA.Test
 {
@@ -13,7 +13,7 @@ namespace ProjectA.Test
     {
         public IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContextFactory<DocumentContext>(options =>
+            services.AddDbContextFactory<AppDbContext>(options =>
                 options.UseSqlite(CreateInMemoryDatabase()));
 
             return services;
@@ -23,7 +23,7 @@ namespace ProjectA.Test
         {
             ServiceProvider = services.BuildServiceProvider();
 
-            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Database.EnsureCreated();
         }
@@ -32,7 +32,7 @@ namespace ProjectA.Test
 
         protected void AppendTestDataToDatabase(Document[] documents)
         {
-            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Documents.AddRange(documents);
             dbContext.SaveChanges();
@@ -40,7 +40,7 @@ namespace ProjectA.Test
 
         protected void ClearTestData()
         {
-            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<DocumentContext>>();
+            var dbContextFactory = ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Documents.RemoveRange(dbContext.Documents);
             dbContext.SaveChanges();

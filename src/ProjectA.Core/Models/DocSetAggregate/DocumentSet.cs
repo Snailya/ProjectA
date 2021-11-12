@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using ProjectA.Core.Models.DocAggregate;
 using ProjectA.SharedKernel;
 using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Core.Models.DocSetAggregate
 {
-    public class DocumentSet : BaseEntity,IAggregateRoot
+    public class DocumentSet : BaseEntity, IAggregateRoot
     {
         private readonly List<DocumentSetLog> _logs = new();
 
         #region Relationships
 
-        public List<Guid> Documents { get; set; } = new();
+        public List<Document> Documents { get; set; } = new();
 
         #endregion
 
@@ -23,7 +24,7 @@ namespace ProjectA.Core.Models.DocSetAggregate
 
         #region Public Methods
 
-        public void Add(Guid document)
+        public void Add(Document document)
         {
             if (Documents.Contains(document)) return;
 
@@ -31,7 +32,7 @@ namespace ProjectA.Core.Models.DocSetAggregate
             AddLog(document, DocumentSetLogType.Added);
         }
 
-        public void Update(Guid document)
+        public void Update(Document document)
         {
             if (!Documents.Contains(document))
                 throw new InvalidOperationException("Can update a non-exist document of the document set.");
@@ -39,7 +40,7 @@ namespace ProjectA.Core.Models.DocSetAggregate
             AddLog(document);
         }
 
-        public void Delete(Guid document)
+        public void Delete(Document document)
         {
             if (!Documents.Contains(document))
                 throw new InvalidOperationException("Can not delete a non-exist document from document set.");
@@ -48,9 +49,9 @@ namespace ProjectA.Core.Models.DocSetAggregate
             AddLog(document, DocumentSetLogType.Deleted);
         }
 
-        private void AddLog(Guid document, DocumentSetLogType logType = DocumentSetLogType.Updated)
+        private void AddLog(Document document, DocumentSetLogType logType = DocumentSetLogType.Updated)
         {
-            _logs.Add(new DocumentSetLog(document, DateTime.UtcNow, logType));
+            _logs.Add(new DocumentSetLog(document.Guid, DateTime.UtcNow, logType));
         }
 
         #endregion

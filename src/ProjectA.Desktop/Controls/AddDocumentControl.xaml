@@ -18,24 +18,23 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <TextBox Margin="0 8"
-                materialDesign:HintAssist.Hint="Entity Id" >
+            <TextBox Margin="0 8" x:Name="EntityIdInputBox" 
+                     materialDesign:HintAssist.Hint="Entity Id">
                 <TextBox.Text>
                     <Binding
                         Path="Id"
                         UpdateSourceTrigger="PropertyChanged">
                         <Binding.ValidationRules>
-                            <validations:NotEmptyValidationRule
-                                ValidatesOnTargetUpdated="True" />
+                            <validations:NotEmptyValidationRule ValidatesOnTargetUpdated="True" />
                         </Binding.ValidationRules>
                     </Binding>
                 </TextBox.Text>
             </TextBox>
             <TextBox Grid.Row="1" Margin="0 8 0 0"
-                     materialDesign:HintAssist.Hint="Snapshot Folder Id" >
+                     materialDesign:HintAssist.Hint="Target Folder Id">
                 <TextBox.Text>
                     <Binding
-                        Path="SnapshotFolderId"
+                        Path="TargetFolderId"
                         UpdateSourceTrigger="PropertyChanged" />
                 </TextBox.Text>
             </TextBox>
@@ -43,7 +42,7 @@
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center"
                     Margin="0 8 0 0">
-            <Button IsDefault="True"
+            <Button IsDefault="True" 
                     Style="{StaticResource MaterialDesignFlatButton}"
                     Command="{Binding SubmitCommand}">
                 SUBMIT

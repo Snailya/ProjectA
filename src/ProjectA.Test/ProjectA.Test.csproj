@@ -10,6 +10,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
+        <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="NUnit" Version="3.13.1" />
         <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
         <PackageReference Include="coverlet.collector" Version="3.0.2" />
@@ -17,6 +18,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\ProjectA.Core\ProjectA.Core.csproj" />
+        <ProjectReference Include="..\ProjectA.Infrastructure\ProjectA.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>

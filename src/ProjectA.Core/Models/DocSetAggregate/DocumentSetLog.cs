@@ -1,8 +1,19 @@
 using System;
+using ProjectA.SharedKernel;
 
 namespace ProjectA.Core.Models.DocSetAggregate
 {
-    public record DocumentSetLog(Guid Document, DateTime Time, DocumentSetLogType Type)
+    public class DocumentSetLog : BaseEntity
     {
+        public DocumentSetLog(Guid documentId, DateTime time, DocumentSetLogType type)
+        {
+            DocumentId = documentId;
+            Time = time;
+            Type = type;
+        }
+
+        public Guid DocumentId { get; init; }
+        public DateTime Time { get; init; }
+        public DocumentSetLogType Type { get; init; }
     }
 }

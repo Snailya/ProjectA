@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -31,19 +32,8 @@ namespace ProjectA.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Document>().HasKey(x => x.Guid);
-            modelBuilder.Entity<Document>().HasOne(p => p.LinkedDoc);
-            modelBuilder.Entity<Document>().OwnsMany(
-                p => p.Versions, a =>
-                {
-                    a.HasKey(x => x.Guid);
-
-                    a.WithOwner().HasForeignKey("EntityId");
-                    a.OwnsOne(dv => dv.VersionNumber);
-
-                    // a.Property<Guid>("Id");
-                    // a.HasKey("Id");
-                });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())

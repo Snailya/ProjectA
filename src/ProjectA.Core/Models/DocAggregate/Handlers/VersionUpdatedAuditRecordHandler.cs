@@ -8,16 +8,16 @@ namespace ProjectA.Core.Models.DocAggregate.Handlers
 {
     public class VersionUpdatedAuditRecordHandler : INotificationHandler<VersionUpdatedEvent>
     {
-        private readonly IDocSetLogService _docSetLogService;
+        private readonly IDocSetService _docSetService;
 
-        public VersionUpdatedAuditRecordHandler(IDocSetLogService docSetLogService)
+        public VersionUpdatedAuditRecordHandler(IDocSetService docSetService)
         {
-            _docSetLogService = docSetLogService;
+            _docSetService = docSetService;
         }
 
         public Task Handle(VersionUpdatedEvent notification, CancellationToken cancellationToken)
         {
-            return _docSetLogService.AddUpdateLog(notification.Guid);
+            return _docSetService.AddUpdateLog(notification.Document);
         }
     }
 }

@@ -1,32 +1,34 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using ProjectA.Core.Models.DocAggregate;
 using ProjectA.Desktop.Annotations;
 using ProjectA.Desktop.Services;
-using ProjectA.Infrastructure.Data;
+using ProjectA.SharedKernel.Interfaces;
 
 namespace ProjectA.Desktop.ViewModels
 {
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
-        private readonly ILogger<MainWindowViewModel> _logger;
-
-        public MainWindowViewModel(ILogger<MainWindowViewModel> logger,
-            IDbContextFactory<DocumentContext> dbContextFactory,
+        public MainWindowViewModel(ILogger<MainWindowViewModel> logger, IRepository<Document> repository,
             ShepherdService service)
         {
-            _logger = logger;
-            DashboardViewModel = new DashboardViewModel(dbContextFactory);
+            DashboardViewModel = new DashboardViewModel(repository);
             ToolbarViewModel = new ToolbarViewModel();
 
-            service.AfterExecute += (sender, args) =>
+            service.AfterExecute += async (sender, args) =>
             {
-                _logger.LogInformation("Reload document by {FunctionName}", nameof(service.AfterExecute));
-                DashboardViewModel.ReloadDocuments();
+                logger.LogInformation("Reload document by {FunctionName}", nameof(service.AfterExecute));
+                await DashboardViewModel.ReloadDocuments();
             };
-            ToolbarViewModel.OnRefreshDocumentsButtonClicked += (sender, args) => { service.ExecuteImmediately(); };
-            ToolbarViewModel.OnSynchronizeButtonToggled += (sender, b) => { service.EnableSync = b; };
+            ToolbarViewModel.OnRefreshDocumentsButtonClicked += async (sender, args) =>
+            {
+                await service.ExecuteImmediately();
+            };
+            ToolbarViewModel.OnSynchronizeButtonToggled += (sender, b) =>
+            {
+                service.EnableSync = b;
+            };
         }
 
         public DashboardViewModel DashboardViewModel { get; set; }

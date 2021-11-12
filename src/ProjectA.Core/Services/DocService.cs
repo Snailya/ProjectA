@@ -7,44 +7,20 @@ using ProjectA.Core.Models.DocAggregate;
 using ProjectA.Core.Models.DocAggregate.Specifications;
 using ProjectA.SharedKernel.Interfaces;
 
-namespace ProjectA.Infrastructure.Services
+namespace ProjectA.Core.Services
 {
-    public class SynchronizeService : ISynchronizeService
+    public class DocService : IDocService
     {
-        private readonly IDMSService _dmsService;
-        private readonly ILogger<SynchronizeService> _logger;
+        private readonly ILogger<DocService> _logger;
         private readonly IRepository<Document> _repository;
+        private readonly IDMSService _dmsService;
 
-        public SynchronizeService(ILogger<SynchronizeService> logger, IRepository<Document> repository,
+        public DocService(ILogger<DocService> logger, IRepository<Document> repository,
             IDMSService dmsService)
         {
             _logger = logger;
             _repository = repository;
             _dmsService = dmsService;
-        }
-
-        #region Public Methods
-
-        public async Task BatchDownAsync()
-        {
-            _logger.LogInformation(nameof(BatchDownAsync));
-            foreach (var document in await _repository.ListAsync()) await Down(document.EntityId);
-        }
-
-        public async Task BatchSynchronizeDocumentsAsync()
-        {
-            _logger.LogInformation(nameof(BatchSynchronizeDocumentsAsync));
-
-            var spec = new DocumentThatNeedUpdateLinkedDocSpec();
-            var sources = await _repository.ListAsync(spec);
-
-            foreach (var document in sources)
-            {
-                if (document.LinkedDoc == null)
-                    document.MakeLink(await CopyDocumentAsync(document.EntityId, document.LinkedDocFolderId));
-
-                await SynchronizeDocument(document.EntityId, document.LinkedDoc!.EntityId);
-            }
         }
 
         /// <summary>
@@ -61,7 +37,7 @@ namespace ProjectA.Infrastructure.Services
             if (document == null)
                 throw new Exception(); // todo: define exception type
 
-            var versions = _dmsService.GetVersions(entityId).ToList();
+            var versions = _dmsService.GetVersions(entityId).Reverse().ToList();
             foreach (var version in versions.Where(version => version.VersionNumber.IsMajorVersion()).Where(version =>
                          document.Versions.All(x => x.VersionNumber != version.VersionNumber)))
                 document.UpdateVersion(version);
@@ -70,6 +46,7 @@ namespace ProjectA.Infrastructure.Services
             var documentRemote = _dmsService.GetDocument(document.EntityId);
             document.FileName = documentRemote.FileName;
             document.FilePath = documentRemote.FilePath;
+            document.FileNamePath = documentRemote.FileNamePath;
             document.UpdatedAt = documentRemote.UpdatedAt;
             document.UpdatedBy = documentRemote.UpdatedBy;
 
@@ -103,7 +80,5 @@ namespace ProjectA.Infrastructure.Services
                     _dmsService.PublishVersion(targetId);
             }
         }
-
-        #endregion
     }
 }

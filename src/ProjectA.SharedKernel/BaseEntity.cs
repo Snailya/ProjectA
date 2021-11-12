@@ -5,8 +5,7 @@ namespace ProjectA.SharedKernel
 {
     public abstract class BaseEntity
     {
+        public List<BaseDomainEvent> Events = new();
         public Guid Guid { get; set; }
-
-        public List<BaseDomainEvent> Events = new List<BaseDomainEvent>();
     }
 }
