@@ -1,8 +1,8 @@
-namespace ProjectA.Core.Models.DocSetAggregate
+namespace ProjectA.Core.Models.DocAggregate
 {
     public enum DocumentSetLogType : uint
     {
-        Added,
+        Created,
         Updated,
         Deleted
     }

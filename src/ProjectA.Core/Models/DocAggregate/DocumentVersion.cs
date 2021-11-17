@@ -1,10 +1,10 @@
 using System;
+using ProjectA.SharedKernel;
 
 namespace ProjectA.Core.Models.DocAggregate
 {
-    public record DocumentVersion : IComparable<DocumentVersion>
+    public class DocumentVersion : BaseEntity, IComparable<DocumentVersion>
     {
-        public Guid Guid { get; set; } // used by efcore to as foreign key
         public int VersionId { get; init; }
         public DocumentVersionNumber VersionNumber { get; init; }
 

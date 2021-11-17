@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using EDoc2.IAppService;
 using EDoc2.IAppService.Model;
+using EDoc2.IAppService.ResultModel;
 using EDoc2.Sdk;
 using EDoc2.Sdk.Models;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ using ProjectA.Infrastructure.Services.Exceptions;
 
 namespace ProjectA.Infrastructure.Services
 {
-    public class EDocService : IDMSService
+    public class EDocService : IFileSystemService
     {
         private readonly IDocAppService _docAppService;
         private readonly IFileAppService _fileAppService;
@@ -57,36 +58,114 @@ namespace ProjectA.Infrastructure.Services
             return new MemoryStream(byteArray);
         }
 
-        public async Task<int> UpdateVersionAsync(int fileId, Stream fileStream)
+        public async Task<int> UpdateVersionAsync(int id, Stream fileStream)
         {
             _logger.LogInformation(nameof(UpdateVersionAsync));
 
             ValidateToken();
 
             // get file info
-            var file = _fileAppService.GetFileInfoById(_token, fileId);
+            var file = _fileAppService.GetFileInfoById(_token, id);
             if (file.Result != 0)
-                throw new EDocApiException($"Unable to get file info with error code {file.Result}");
+                throw new EDocApiException<FileInfoForSdkResult>("Unable to get file info", file);
 
             // update file
-            var updated = await Uploader.UpdateFileAsync(_token, fileId, file.Data.FileName
+            var updated = await Uploader.UpdateFileAsync(_token, id, file.Data.FileName
                 , fileStream, file.Data.ParentFolderId, UpdateUpgradeStrategy.MinorUpgrade);
 
             return updated.File.FileVerId;
         }
 
-        public int CopySingleDocument(int sourceId, int targetFolderId)
+        public IEnumerable<DocumentVersion> GetVersions(Document document)
+        {
+            ValidateToken();
+
+            var versions = _fileAppService.GetFileVerListByFileId(_token, document.EntityId);
+            if (versions.Result != 0)
+                throw new EDocApiException<List<EDocFileVerInfoResult>>("Unable to get version info from EDoc server",
+                    versions);
+            if (!versions.Data.Any())
+                throw new EDocApiException<List<EDocFileVerInfoResult>>("File version info is empty", versions);
+
+            return versions.Data.Select(x => new DocumentVersion
+            {
+                VersionId = x.FileCurVerId,
+                VersionNumber = DocumentVersionNumber.FromFileCurVerNumStr(x.FileCurVerNumStr)
+            });
+        }
+
+        public Document CopySingleDocument(Document source, int targetFolderId)
         {
             _logger.LogInformation(nameof(CopySingleDocument));
-            
+
             ValidateToken();
-            
+
             var copy = _docAppService.CopySingleFile(new CopySingleFileDto
-                {FileId = sourceId, Token = _token, TargetFolderId = targetFolderId});
+                {FileId = source.EntityId, Token = _token, TargetFolderId = targetFolderId});
             if (copy.Result != 0)
-                throw new EDocApiException(
-                    $"Unable to copy file {sourceId} to folder {targetFolderId} with error code {copy.Result}.");
-            return copy.Data.FileId;
+                throw new EDocApiException<CopySingleFileInfo>("Unable to copy file", copy);
+
+            return new Document(copy.Data.FileId);
+        }
+
+        public async Task<DocumentVersion> UpdateVersionAsync(Document document, MemoryStream fileStream)
+        {
+            ValidateToken();
+
+            var info = _fileAppService.GetFileInfoById(_token, document.EntityId);
+            if (info.Result != 0)
+                throw new EDocApiException<FileInfoForSdkResult>(
+                    "Failed to updated version as document folder id is currently unknown", info);
+
+            var updated = await Uploader.UpdateFileAsync(_token, document.EntityId, info.Data.FileName
+                , fileStream, info.Data.ParentFolderId, UpdateUpgradeStrategy.MinorUpgrade);
+
+            info = _fileAppService.GetFileInfoByFileVersionId(_token, updated.File.FileVerId);
+            if (info.Result != 0)
+                throw new EDocApiException<FileInfoForSdkResult>(
+                    "Successfully updated file version but failed to get version info currently", info);
+
+            return new DocumentVersion
+            {
+                VersionId = info.Data.CurrentVersionId,
+                VersionNumber = DocumentVersionNumber.FromFileCurVerNumStr(info.Data.FileCurVerNumStr)
+            };
+        }
+
+        public Task<DocumentVersion> PublishVersion(Document document)
+        {
+            _logger.LogInformation(nameof(PublishVersion));
+
+            ValidateToken();
+
+            var version = _fileAppService.PublishFileVersion(new FileDto
+                {FileId = document.EntityId, Token = _token});
+            if (version.Result != 0)
+                throw new EDocApiException<FileVersionInfoResult>("Publish version failed", version);
+
+            return Task.FromResult(new DocumentVersion
+            {
+                VersionId = version.Data.FileCurVerId,
+                VersionNumber = DocumentVersionNumber.FromFileCurVerNumStr(version.Data.FileCurVerNumStr)
+            });
+        }
+
+        public Document GetDocument(int id)
+        {
+            _logger.LogInformation(nameof(GetDocument));
+
+            ValidateToken();
+
+            var file = _fileAppService.GetFileInfoById(_token, id);
+            if (file.Result != 0)
+                throw new EDocApiException<FileInfoForSdkResult>("Unable to get file info from EDoc server", file);
+
+            return new Document(file.Data.FileId)
+            {
+                FileName = file.Data.FileName, FilePath = file.Data.FilePath, FileNamePath = file.Data.FileNamePath,
+                UpdatedAt = file.Data.FileModifyTime,
+                UpdatedBy = file.Data.EditorName
+            };
         }
 
         public void PublishVersion(int fileId)
@@ -94,44 +173,9 @@ namespace ProjectA.Infrastructure.Services
             _logger.LogInformation(nameof(PublishVersion));
 
             ValidateToken();
-            
+
             _fileAppService.PublishFileVersion(new FileDto
                 {FileId = fileId, Token = _token});
-        }
-
-        public Document GetDocument(int fileId)
-        {
-            _logger.LogInformation(nameof(GetDocument));
-
-            ValidateToken();
-            
-            var file = _fileAppService.GetFileInfoById(_token, fileId);
-            if (file.Result != 0) throw new EDocApiException("Unable to get file info from EDoc server.");
-
-            return new Document(file.Data.FileId)
-            {
-                FileName = file.Data.FileName, FilePath = file.Data.FilePath,FileNamePath = file.Data.FileNamePath, UpdatedAt = file.Data.FileModifyTime,
-                UpdatedBy = file.Data.EditorName
-            };
-        }
-
-        public IEnumerable<DocumentVersion> GetVersions(int fileId)
-        {
-            _logger.LogInformation(nameof(GetVersions));
-
-            ValidateToken();
-            
-            var versions = _fileAppService.GetFileVerListByFileId(_token, fileId);
-            if (versions.Result != 0)
-                throw new EDocApiException("Unable to get version info from EDoc server.");
-            if (!versions.Data.Any())
-                throw new EDocApiException("File version info is empty.");
-
-            return versions.Data.Select(x => new DocumentVersion
-            {
-                VersionId = x.FileCurVerId,
-                VersionNumber = DocumentVersionNumber.FromFileCurVerNumStr(x.FileCurVerNumStr)
-            });
         }
 
         private async Task<string> GetDownloadRegionHashAsync(int versionId)
@@ -146,7 +190,7 @@ namespace ProjectA.Infrastructure.Services
             var message = JsonConvert.DeserializeObject<dynamic>(await httpResponseMessage.Content.ReadAsStringAsync());
             if (message!.nResult != 0)
                 throw new EDocApiException(
-                    $"Unable to download file with error code {message.nResult}"); // throw if on error
+                    "Unable to download file with error code {message.nResult}"); // throw if on error
             return message.RegionHash;
         }
 

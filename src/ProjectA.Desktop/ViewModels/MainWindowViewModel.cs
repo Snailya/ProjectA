@@ -23,11 +23,7 @@ namespace ProjectA.Desktop.ViewModels
             };
             ToolbarViewModel.OnRefreshDocumentsButtonClicked += async (sender, args) =>
             {
-                await service.ExecuteImmediately();
-            };
-            ToolbarViewModel.OnSynchronizeButtonToggled += (sender, b) =>
-            {
-                service.EnableSync = b;
+                service.DoWork();
             };
         }
 

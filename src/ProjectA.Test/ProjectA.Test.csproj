@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.11" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
         <PackageReference Include="Moq" Version="4.16.1" />
         <PackageReference Include="NUnit" Version="3.13.1" />
@@ -37,6 +37,15 @@
         <None Update="TESTFILE">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="UnitTests\DocServiceTest.cs" />
+      <Compile Remove="UnitTests\DocumentTest.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="IntegrationTests" />
     </ItemGroup>
 
 </Project>

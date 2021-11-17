@@ -16,7 +16,6 @@ namespace ProjectA.Desktop.ViewModels
         {
             OpenAddNewDocumentDialogCommand = new AnotherCommandImplementation(OpenAddNewDocumentDialog);
             ForceRefreshDocumentsCommand = new AnotherCommandImplementation(RefreshDocuments);
-            ToggleButtonClickedCommand = new AnotherCommandImplementation(ToggleButtonClicked);
         }
 
         #endregion
@@ -24,7 +23,6 @@ namespace ProjectA.Desktop.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public event EventHandler OnRefreshDocumentsButtonClicked;
-        public event EventHandler<bool> OnSynchronizeButtonToggled;
 
 
         private void RefreshDocuments(object obj)
@@ -38,10 +36,6 @@ namespace ProjectA.Desktop.ViewModels
             IsAddDocumentDialogOpen = true;
         }
 
-        private void ToggleButtonClicked(object obj)
-        {
-            OnSynchronizeButtonToggled?.Invoke(this, IsSynchronizing);
-        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -53,7 +47,6 @@ namespace ProjectA.Desktop.ViewModels
 
         public ICommand OpenAddNewDocumentDialogCommand { get; }
         public ICommand ForceRefreshDocumentsCommand { get; }
-        public ICommand ToggleButtonClickedCommand { get; }
 
         #endregion
 
@@ -62,7 +55,6 @@ namespace ProjectA.Desktop.ViewModels
         public object? DialogContent { get; set; }
         public bool IsAddDocumentDialogOpen { get; set; }
         public bool IsListening { get; set; } = true;
-        public bool IsSynchronizing { get; set; }
 
         #endregion
     }

@@ -9,7 +9,7 @@ namespace ProjectA.Infrastructure.Data.Config
         public void Configure(EntityTypeBuilder<Document> builder)
         {
             builder.HasKey(x => x.Guid);
-            builder.HasOne(p => p.LinkedDoc);
+            builder.HasMany(p => p.Bindings);
             builder.OwnsMany(
                 p => p.Versions, a =>
                 {

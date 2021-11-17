@@ -2,9 +2,9 @@ using Ardalis.Specification;
 
 namespace ProjectA.Core.Models.DocAggregate.Specifications
 {
-    public class DocumentByEntityIdSpec : Specification<Document>, ISingleResultSpecification
+    public class DocumentSpec : Specification<Document>, ISingleResultSpecification
     {
-        public DocumentByEntityIdSpec(int entityId)
+        public DocumentSpec(int entityId)
         {
             Query
                 .Where(document => document.EntityId == entityId);

@@ -87,7 +87,7 @@ namespace ProjectA.Infrastructure
             builder.Register(c => new HttpClient())
                 .As<HttpClient>();
             builder.RegisterType<EDocService>()
-                .As<IDMSService>().InstancePerLifetimeScope();
+                .As<IFileSystemService>().InstancePerLifetimeScope();
         }
 
         private void RegisterDevelopmentOnlyDependencies(ContainerBuilder builder)

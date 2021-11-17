@@ -8,10 +8,10 @@ namespace ProjectA.Core
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<DocService>()
-                .As<IDocService>().InstancePerLifetimeScope();
-            builder.RegisterType<DocSetService>()
-                .As<IDocSetService>().InstancePerLifetimeScope();
+            builder.RegisterType<DocumentHelper>()
+                .As<IDocumentHelper>().InstancePerLifetimeScope();
+            builder.RegisterType<AppService>()
+                .As<IAppService>().InstancePerLifetimeScope();
         }
     }
 }

@@ -19,7 +19,7 @@ namespace ProjectA.Desktop.Validations
         {
             if (value is not int entityId) return new ValidationResult(false, "Field is required.");
             
-            var spec = new DocumentByEntityIdSpec(entityId);
+            var spec = new DocumentSpec(entityId);
             var document = _repository.GetBySpecAsync(spec).GetAwaiter().GetResult();
             return document == null
                 ? ValidationResult.ValidResult

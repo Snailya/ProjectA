@@ -26,7 +26,7 @@ namespace ProjectA.Desktop.ViewModels
 
         public async Task ReloadDocuments()
         {
-            var spec = new DocumentsWithLinkedDocSpec();
+            var spec = new DocumentsWithBindingsSpec();
             Documents = new ObservableCollection<Document>((await _repository.ListAsync(spec)));
         }
 

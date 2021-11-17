@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using ProjectA.Core.Interfaces;
 using ProjectA.Core.Models.DocAggregate;
 using ProjectA.Core.Models.DocAggregate.Specifications;
 using ProjectA.Desktop.Annotations;
@@ -10,11 +11,13 @@ namespace ProjectA.Desktop.ViewModels
 {
     public class AddDocumentViewModel : INotifyPropertyChanged
     {
+        private readonly IAppService _appService;
         private readonly IRepository<Document> _repository;
 
 
-        public AddDocumentViewModel(IRepository<Document> repository)
+        public AddDocumentViewModel(IAppService appService, IRepository<Document> repository)
         {
+            _appService = appService;
             _repository = repository;
             SubmitCommand = new AnotherCommandImplementation(Submit, CanSubmit);
             CancelCommand = new AnotherCommandImplementation(Cancel);
@@ -31,7 +34,7 @@ namespace ProjectA.Desktop.ViewModels
 
         private bool CanSubmit(object arg)
         {
-            var spec = new DocumentByEntityIdSpec(Id);
+            var spec = new DocumentSpec(Id);
             var document = _repository.GetBySpecAsync(spec).GetAwaiter().GetResult();
             return document == null;
         }
@@ -42,12 +45,13 @@ namespace ProjectA.Desktop.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void Submit(object o)
+        private async void Submit(object o)
         {
-            var document = new Document(Id, TargetFolderId);
-            _repository.AddAsync(document);
-            _repository.SaveChangesAsync();
-
+            Document document;
+            if (TargetFolderId != default)
+                document = await _appService.AddDocumentBindingToFolder(Id, TargetFolderId);
+            else
+                document = await _appService.AddDocument(Id);
             ViewModelLocator.MainWindowViewModel.DashboardViewModel.Documents.Add(document);
             ViewModelLocator.MainWindowViewModel.ToolbarViewModel.IsAddDocumentDialogOpen = false;
         }

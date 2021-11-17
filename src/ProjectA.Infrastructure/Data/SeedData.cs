@@ -16,9 +16,9 @@ namespace ProjectA.Infrastructure.Data
                 context.SaveChanges();
             }
 
-            var document1 = new Document(668407, 75696);
+            var document1 = new Document(668407);
             document1.UpdateVersion(new DocumentVersion
-                {VersionId = 810828, VersionNumber = new DocumentVersionNumber(1, 0)});
+                {VersionId = 810828, VersionNumber = new DocumentVersionNumber( 1, 0)});
             context.Documents.Add(document1);
             context.SaveChanges();
         }

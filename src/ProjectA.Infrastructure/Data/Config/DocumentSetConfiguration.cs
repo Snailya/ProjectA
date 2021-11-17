@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ProjectA.Core.Models.DocAggregate;
-using ProjectA.Core.Models.DocSetAggregate;
 
 namespace ProjectA.Infrastructure.Data.Config
 {
@@ -15,7 +14,7 @@ namespace ProjectA.Infrastructure.Data.Config
                 {
                     a.HasKey(x => x.Guid);
 
-                    a.WithOwner().HasForeignKey("Guid");
+                    a.WithOwner().HasForeignKey("SetId");
                 });
         }
     }

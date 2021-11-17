@@ -13,7 +13,7 @@ namespace ProjectA.Test.UnitTests
             // arrange
             var linkedDoc = new Document(new Random().Next());
             var document = new Document(new Random().Next());
-            document.MakeLink(linkedDoc);
+            document.SetLinkedDoc(linkedDoc);
 
             // act & assert
             Assert.Throws<InvalidOperationException>(() =>

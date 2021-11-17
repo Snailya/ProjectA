@@ -1,10 +1,20 @@
 using System;
 using System.Text.RegularExpressions;
+using ProjectA.SharedKernel;
 
 namespace ProjectA.Core.Models.DocAggregate
 {
-    public record DocumentVersionNumber(int Major, int Minor) : IComparable<DocumentVersionNumber>
+    public class DocumentVersionNumber : ValueObject, IComparable<DocumentVersionNumber>
     {
+        public DocumentVersionNumber(int major, int minor)
+        {
+            Major = major;
+            Minor = minor;
+        }
+
+        public int Major { get; }
+        public int Minor { get; }
+
         public int CompareTo(DocumentVersionNumber other)
         {
             return this < other ? -1 : this == other ? 0 : 1;

@@ -3,12 +3,15 @@ using ProjectA.SharedKernel;
 
 namespace ProjectA.Core.Models.DocAggregate.Events
 {
-    public class VersionUpdatedEvent : BaseDomainEvent
+    public class AddBindingEvent : BaseDomainEvent
     {
-        public VersionUpdatedEvent(Document document)
+        public AddBindingEvent(Document document, Document binding)
         {
             Document = document;
+            Binding = binding;
         }
+
+        public Document Binding { get; set; }
 
         public Document Document { get; set; }
     }

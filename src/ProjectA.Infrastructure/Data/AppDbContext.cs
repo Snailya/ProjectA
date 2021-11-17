@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProjectA.Core.Models.DocAggregate;
-using ProjectA.Core.Models.DocSetAggregate;
 using ProjectA.SharedKernel;
 
 namespace ProjectA.Infrastructure.Data
